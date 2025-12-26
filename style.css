@@ -906,3 +906,56 @@ body {
     margin-top: 0.5rem;
     font-size: 0.8rem;
 }
+
+/* ===================================
+   AUDIO CONTROLS
+   =================================== */
+.audio-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    background: rgba(25, 32, 56, 0.5);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-md);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.audio-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: transform var(--transition-fast);
+}
+
+.audio-btn:hover {
+    transform: scale(1.1);
+}
+
+.volume-slider {
+    width: 100px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 2px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}

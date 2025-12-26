@@ -686,16 +686,71 @@ function getPieceSymbol(piece) {
 // EVENT LISTENERS
 // ===================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    initializeGame();
+// ===================================
+// AUDIO HANDLING
+// ===================================
 
-    const newGameBtn = document.getElementById('newGameBtn');
-    newGameBtn.addEventListener('click', () => {
-        if (confirm('Start a new game? Current progress will be lost.')) {
-            initializeGame();
-            showGameMessage('New game started! Good luck!', 'info');
+function initializeAudio() {
+    const bgMusic = document.getElementById('bgMusic');
+    const muteBtn = document.getElementById('muteBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    if (!bgMusic || !muteBtn || !volumeSlider) return;
+
+    // Set initial volume
+    bgMusic.volume = volumeSlider.value;
+
+    // Try to autoplay
+    const playAudio = () => {
+        bgMusic.play().then(() => {
+            // Once played, remove listeners
+            document.removeEventListener('click', playAudio);
+            document.removeEventListener('keydown', playAudio);
+        }).catch(err => {
+            console.log("Autoplay blocked. Waiting for interaction.");
+        });
+    };
+
+    // Browsers block autoplay without interaction
+    document.addEventListener('click', playAudio);
+    document.addEventListener('keydown', playAudio);
+
+    muteBtn.addEventListener('click', () => {
+        if (bgMusic.paused) {
+            bgMusic.play();
+            muteBtn.textContent = '🔊';
+        } else {
+            bgMusic.pause();
+            muteBtn.textContent = '🔇';
         }
     });
+
+    volumeSlider.addEventListener('input', (e) => {
+        bgMusic.volume = e.target.value;
+        if (bgMusic.volume === 0) {
+            muteBtn.textContent = '🔇';
+        } else if (bgMusic.paused) {
+            // If they move slider while paused, keep it muted icon
+            muteBtn.textContent = '🔇';
+        } else {
+            muteBtn.textContent = '🔊';
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeGame();
+    initializeAudio();
+
+    const newGameBtn = document.getElementById('newGameBtn');
+    if (newGameBtn) {
+        newGameBtn.addEventListener('click', () => {
+            if (confirm('Start a new game? Current progress will be lost.')) {
+                initializeGame();
+                showGameMessage('New game started! Good luck!', 'info');
+            }
+        });
+    }
 });
 
 // ===================================
