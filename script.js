@@ -267,6 +267,9 @@ function movePiece(from, to) {
     // Capture piece if present
     if (capturedPiece) {
         gameState.capturedPieces[capturedPiece.color].push(capturedPiece);
+        playSound('capture');
+    } else {
+        playSound('move');
     }
 
     // Check if this is a castling move
@@ -607,8 +610,10 @@ function checkGameState() {
             gameState.isGameOver = true;
             const winner = currentColor === 'white' ? 'Black' : 'White';
             showGameMessage(`Checkmate! ${winner} wins! 👑`, 'victory');
+            playSound('victory');
         } else {
             showGameMessage('Check! Protect your king!', 'warning');
+            playSound('check');
         }
     }
 }
@@ -737,6 +742,31 @@ function initializeAudio() {
         }
     });
 }
+
+function playSound(type) {
+    const bgMusic = document.getElementById('bgMusic');
+    const sfx = {
+        move: document.getElementById('sfxMove'),
+        capture: document.getElementById('sfxCapture'),
+        check: document.getElementById('sfxCheck'),
+        victory: document.getElementById('sfxVictory')
+    };
+
+    const sound = sfx[type];
+    if (sound) {
+        const volumeSlider = document.getElementById('volumeSlider');
+        sound.volume = volumeSlider ? volumeSlider.value : 0.3;
+
+        const muteBtn = document.getElementById('muteBtn');
+        if (muteBtn && muteBtn.textContent === '🔇') {
+            return;
+        }
+
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("SFX play blocked"));
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeGame();
