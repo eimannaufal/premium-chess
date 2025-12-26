@@ -914,25 +914,43 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-top: 1rem;
-    background: rgba(25, 32, 56, 0.5);
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius-md);
+    background: rgba(25, 32, 56, 0.6);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-lg);
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: var(--shadow-lg);
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.slider-group label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    font-weight: 600;
 }
 
 .audio-btn {
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     cursor: pointer;
     color: var(--text-primary);
     transition: transform var(--transition-fast);
+    padding: 0.5rem;
+    line-height: 1;
 }
 
 .audio-btn:hover {

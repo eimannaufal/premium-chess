@@ -698,13 +698,14 @@ function getPieceSymbol(piece) {
 function initializeAudio() {
     const bgMusic = document.getElementById('bgMusic');
     const muteBtn = document.getElementById('muteBtn');
-    const volumeSlider = document.getElementById('volumeSlider');
+    const musicVolume = document.getElementById('musicVolume');
+    const sfxVolume = document.getElementById('sfxVolume');
     const audioOverlay = document.getElementById('audioOverlay');
 
-    if (!bgMusic || !muteBtn || !volumeSlider || !audioOverlay) return;
+    if (!bgMusic || !muteBtn || !musicVolume || !sfxVolume || !audioOverlay) return;
 
-    // Set initial volume
-    bgMusic.volume = volumeSlider.value;
+    // Set initial music volume
+    bgMusic.volume = musicVolume.value;
 
     const startAudio = () => {
         bgMusic.play().then(() => {
@@ -737,15 +738,24 @@ function initializeAudio() {
         }
     });
 
-    volumeSlider.addEventListener('input', (e) => {
+    musicVolume.addEventListener('input', (e) => {
         bgMusic.volume = e.target.value;
-        const isMuted = muteBtn.textContent === '🔇';
-        if (bgMusic.volume === 0) {
+        updateMuteIcon();
+    });
+
+    sfxVolume.addEventListener('input', (e) => {
+        updateMuteIcon();
+    });
+
+    function updateMuteIcon() {
+        if (musicVolume.value == 0 && sfxVolume.value == 0) {
             muteBtn.textContent = '🔇';
-        } else if (!bgMusic.paused) {
+        } else if (bgMusic.paused) {
+            muteBtn.textContent = '🔇';
+        } else {
             muteBtn.textContent = '🔊';
         }
-    });
+    }
 
     // Check if music is already playing (rare but possible)
     if (!bgMusic.paused) {
@@ -755,6 +765,9 @@ function initializeAudio() {
 
 function playSound(type) {
     const bgMusic = document.getElementById('bgMusic');
+    const muteBtn = document.getElementById('muteBtn');
+    const sfxVolume = document.getElementById('sfxVolume');
+
     const sfx = {
         move: document.getElementById('sfxMove'),
         capture: document.getElementById('sfxCapture'),
@@ -764,11 +777,11 @@ function playSound(type) {
 
     const sound = sfx[type];
     if (sound) {
-        const volumeSlider = document.getElementById('volumeSlider');
-        sound.volume = volumeSlider ? volumeSlider.value : 0.3;
+        // Use dedicated SFX volume
+        sound.volume = sfxVolume ? sfxVolume.value : 0.6;
 
-        const muteBtn = document.getElementById('muteBtn');
-        if (muteBtn && muteBtn.textContent === '🔇') {
+        // If master mute button is active, silence it
+        if (muteBtn && muteBtn.textContent === '🔇' && bgMusic && bgMusic.paused) {
             return;
         }
 
