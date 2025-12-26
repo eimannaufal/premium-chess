@@ -1,13 +1,26 @@
 // ===================================
-// MULTIPLAYER - PEERJS INTEGRATION
+// MULTIPLAYER - FIREBASE INTEGRATION
 // ===================================
 
-let peer = null;
-let connection = null;
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBJTIrPmc1-ryMkMf8BP2euSFVYiwS_bMU",
+    authDomain: "premium-chess-6d0f5.firebaseapp.com",
+    projectId: "premium-chess-6d0f5",
+    storageBucket: "premium-chess-6d0f5.firebasestorage.app",
+    messagingSenderId: "38471159988",
+    appId: "1:38471159988:web:310ba57dc7b703399647e1"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+let gameId = null;
+let gameRef = null;
 let isHost = false;
 let myColor = null; // 'white' or 'black'
 
-// Initialize multiplayer  
 // Initialize multiplayer  
 function initializeMultiplayer() {
     const createBtn = document.getElementById('createGameBtn');
@@ -39,44 +52,89 @@ function initializeMultiplayer() {
 
     // Check for game code in URL
     const urlParams = new URLSearchParams(window.location.search);
-    const gameCode = urlParams.get('game');
-    if (gameCode) {
-        joinOnlineGame(gameCode);
+    const code = urlParams.get('game');
+    if (code) {
+        joinOnlineGame(code);
     }
 }
 
 function createOnlineGame() {
-    if (peer) {
-        peer.destroy();
-    }
-
-    const gameCode = generateGameCode();
-    peer = new Peer(gameCode);
-
-    showStatus('Waiting for opponent...');
-    showGameCode(gameCode);
-    hideMultiplayerControls();
+    gameId = generateGameCode();
+    gameRef = database.ref('games/' + gameId);
 
     isHost = true;
-    myColor = 'white'; // Host plays white
+    myColor = 'white';
 
-    peer.on('open', (id) => {
-        console.log('Peer created with ID:', id);
+    showStatus('Waiting for opponent...');
+    showGameCode(gameId);
+    hideMultiplayerControls();
+
+    // Reset game data in database
+    gameRef.set({
+        host: true,
+        moves: [],
+        resetRequest: false,
+        status: 'waiting'
     });
 
-    peer.on('connection', (conn) => {
-        if (connection && connection.open) {
-            console.log('Already connected to an opponent. Rejecting new connection.');
-            conn.on('open', () => {
-                conn.send({ type: 'error', message: 'Game is already full!' });
-                setTimeout(() => conn.close(), 500);
-            });
+    // Listen for opponent joining
+    gameRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.status === 'playing' && gameState.isOnline === false) {
+            showStatus('Connected! You play as White', 'connected');
+            setupGameListeners();
+
+            // Start a new game
+            initializeGame();
+            gameState.isOnline = true;
+            gameState.myColor = myColor;
+            renderBoard();
+            updateUI();
+        }
+    });
+}
+
+function joinOnlineGame(code) {
+    if (!code) {
+        alert('Please enter a game code!');
+        return;
+    }
+
+    const cleanCode = code.toUpperCase();
+    gameId = cleanCode;
+    gameRef = database.ref('games/' + cleanCode);
+
+    showStatus('Connecting...');
+    hideMultiplayerControls();
+
+    gameRef.once('value').then((snapshot) => {
+        const data = snapshot.val();
+
+        if (!data) {
+            alert('Game not found!');
+            showMultiplayerControls();
+            hideStatus();
             return;
         }
 
-        connection = conn;
-        setupConnection();
-        showStatus('Connected! You play as White', 'connected');
+        if (data.status === 'playing') {
+            alert('Game is already full!');
+            showMultiplayerControls();
+            hideStatus();
+            return;
+        }
+
+        isHost = false;
+        myColor = 'black';
+
+        // Update status to playing
+        gameRef.update({
+            status: 'playing',
+            guest: true
+        });
+
+        showStatus('Connected! You play as Black', 'connected');
+        setupGameListeners();
 
         // Start a new game
         initializeGame();
@@ -85,107 +143,69 @@ function createOnlineGame() {
         renderBoard();
         updateUI();
     });
-
-    peer.on('error', (err) => {
-        console.error('Peer error:', err);
-        showStatus('Connection error: ' + err.type, 'disconnected');
-    });
 }
 
-function joinOnlineGame(gameCode) {
-    if (!gameCode) {
-        alert('Please enter a game code!');
-        return;
-    }
-
-    if (peer) {
-        peer.destroy();
-    }
-
-    peer = new Peer();
-
-    showStatus('Connecting...');
-    hideMultiplayerControls();
-
-    isHost = false;
-    myColor = 'black'; // Joiner plays black
-
-    peer.on('open', () => {
-        connection = peer.connect(gameCode.toUpperCase());
-
-        connection.on('open', () => {
-            setupConnection();
-            showStatus('Connected! You play as Black', 'connected');
-
-            // Start a new game
-            initializeGame();
-            gameState.isOnline = true;
-            gameState.myColor = myColor;
-            renderBoard();
-            updateUI();
-        });
-
-        connection.on('error', (err) => {
-            console.error('Connection error:', err);
-            showStatus('Failed to connect', 'disconnected');
-            showMultiplayerControls();
-        });
-    });
-
-    peer.on('error', (err) => {
-        console.error('Peer error:', err);
-        showStatus('Connection error: ' + err.type, 'disconnected');
-        showMultiplayerControls();
-    });
-}
-
-function setupConnection() {
-    connection.on('data', (data) => {
-        handleRemoteMove(data);
-    });
-
-    connection.on('close', () => {
-        showStatus('Opponent disconnected', 'disconnected');
-        gameState.isOnline = false;
-        setTimeout(() => {
-            showMultiplayerControls();
-            hideStatus();
-        }, 3000);
-    });
-}
-
-function handleRemoteMove(data) {
-    if (data.type === 'move') {
-        // Apply the move received from opponent
-        const { from, to } = data;
-        movePiece(from, to);
-        renderBoard();
-        updateUI();
-    } else if (data.type === 'reset') {
-        // Opponent wants to reset the game
-        if (confirm('Opponent wants to start a new game. Accept?')) {
-            initializeGame();
-            gameState.isOnline = true;
-            gameState.myColor = myColor;
-            renderBoard();
-            updateUI();
+function setupGameListeners() {
+    // Listen for moves
+    gameRef.child('lastMove').on('value', (snapshot) => {
+        const move = snapshot.val();
+        if (move && move.color !== myColor) {
+            handleRemoteMove(move);
         }
-    } else if (data.type === 'error') {
-        showStatus(data.message, 'disconnected');
-        alert(data.message);
-        setTimeout(() => {
-            showMultiplayerControls();
-            hideStatus();
-        }, 3000);
-    }
+    });
+
+    // Listen for resets
+    gameRef.child('resetRequest').on('value', (snapshot) => {
+        const resetTrigger = snapshot.val();
+        if (resetTrigger && resetTrigger.initiatedBy !== myColor) {
+            if (confirm('Opponent wants to start a new game. Accept?')) {
+                initializeGame();
+                gameState.isOnline = true;
+                gameState.myColor = myColor;
+                renderBoard();
+                updateUI();
+                // Clear the request
+                gameRef.update({ resetRequest: false });
+            } else {
+                gameRef.update({ resetRequest: false });
+            }
+        }
+    });
+
+    // Listen for disconnection
+    gameRef.onDisconnect().update({
+        status: 'disconnected'
+    });
+
+    gameRef.child('status').on('value', (snapshot) => {
+        if (snapshot.val() === 'disconnected') {
+            showStatus('Opponent disconnected', 'disconnected');
+            gameState.isOnline = false;
+            setTimeout(() => {
+                showMultiplayerControls();
+                hideStatus();
+            }, 3000);
+        }
+    });
+}
+
+function handleRemoteMove(move) {
+    // Apply the move received from opponent
+    const { from, to } = move;
+    movePiece(from, to);
+    renderBoard();
+    updateUI();
 }
 
 function sendMove(from, to) {
-    if (connection && connection.open) {
-        connection.send({
-            type: 'move',
-            from,
-            to
+    if (gameRef) {
+        gameRef.update({
+            lastMove: {
+                from,
+                to,
+                color: myColor,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }
         });
     }
 }
@@ -243,68 +263,54 @@ function hideMultiplayerControls() {
 
 // Modify the existing handleSquareClick to check if it's player's turn
 const originalHandleSquareClick = handleSquareClick;
-handleSquareClick = function (row, col) {
-    // If online game, check if it's my turn
-    if (gameState.isOnline && gameState.myColor && gameState.currentTurn !== gameState.myColor) {
-        showGameMessage("It's not your turn!", 'warning');
-        return;
-    }
-
-    originalHandleSquareClick(row, col);
-};
-
-// Modify the existing movePiece to send move to opponent
-const originalMovePiece = movePiece;
-movePiece = function (from, to) {
-    // Send move to opponent if online
-    if (gameState.isOnline && gameState.myColor === gameState.currentTurn) {
-        sendMove(from, to);
-    }
-
-    originalMovePiece(from, to);
-};
-
-// Update gameState initialization to include online properties
-const originalInitializeGame = initializeGame;
-initializeGame = function () {
-    const wasOnline = gameState.isOnline;
-    const savedMyColor = gameState.myColor;
-
-    originalInitializeGame();
-
-    if (wasOnline) {
-        gameState.isOnline = true;
-        gameState.myColor = savedMyColor;
-
-        // Notify opponent about reset if we were the one who initiated it
-        // (This is a bit tricky since initializeGame is called in many places)
-        // We only send if color matches current turn or if it's a manual reset
-    } else {
-        gameState.isOnline = false;
-        gameState.myColor = null;
-    }
-};
-
-// Add listener to the new game button to handle online reset
-const newGameBtn = document.getElementById('newGameBtn');
-if (newGameBtn) {
-    const originalNewGameHandler = newGameBtn.onclick; // This might be null if added via addEventListener
-    // Since it's added via addEventListener in script.js, we can't easily remove it.
-    // But we can add another listener.
-    newGameBtn.addEventListener('click', () => {
-        if (gameState.isOnline && connection && connection.open) {
-            connection.send({ type: 'reset' });
+// Note: handleSquareClick is a global function from script.js
+window.addEventListener('load', () => {
+    const oldHandle = handleSquareClick;
+    handleSquareClick = function (row, col) {
+        // If online game, check if it's my turn
+        if (gameState.isOnline && gameState.myColor && gameState.currentTurn !== gameState.myColor) {
+            showGameMessage("It's not your turn!", 'warning');
+            return;
         }
-    });
-}
+        oldHandle(row, col);
+    };
 
-// Initialize multiplayer when DOM is loaded
-const originalDOMContentLoaded = document.querySelector('script[src="script.js"]');
-if (originalDOMContentLoaded) {
-    window.addEventListener('DOMContentLoaded', () => {
-        initializeMultiplayer();
-    });
-} else {
-    // If script is already loaded
+    const oldMove = movePiece;
+    movePiece = function (from, to) {
+        // Send move to opponent if online
+        if (gameState.isOnline && gameState.myColor === gameState.currentTurn) {
+            sendMove(from, to);
+        }
+        oldMove(from, to);
+    };
+
+    const oldInit = initializeGame;
+    initializeGame = function () {
+        const wasOnline = gameState.isOnline;
+        const savedMyColor = gameState.myColor;
+
+        oldInit();
+
+        if (wasOnline) {
+            gameState.isOnline = true;
+            gameState.myColor = savedMyColor;
+        }
+    };
+
+    // Add listener to the new game button to handle online reset
+    const newGameBtn = document.getElementById('newGameBtn');
+    if (newGameBtn) {
+        newGameBtn.addEventListener('click', () => {
+            if (gameState.isOnline && gameRef) {
+                gameRef.update({
+                    resetRequest: {
+                        initiatedBy: myColor,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    }
+                });
+            }
+        });
+    }
+
     initializeMultiplayer();
-}
+});
