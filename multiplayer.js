@@ -65,6 +65,15 @@ function createOnlineGame() {
     });
 
     peer.on('connection', (conn) => {
+        if (connection && connection.open) {
+            console.log('Already connected to an opponent. Rejecting new connection.');
+            conn.on('open', () => {
+                conn.send({ type: 'error', message: 'Game is already full!' });
+                setTimeout(() => conn.close(), 500);
+            });
+            return;
+        }
+
         connection = conn;
         setupConnection();
         showStatus('Connected! You play as White', 'connected');
@@ -161,6 +170,13 @@ function handleRemoteMove(data) {
             renderBoard();
             updateUI();
         }
+    } else if (data.type === 'error') {
+        showStatus(data.message, 'disconnected');
+        alert(data.message);
+        setTimeout(() => {
+            showMultiplayerControls();
+            hideStatus();
+        }, 3000);
     }
 }
 
