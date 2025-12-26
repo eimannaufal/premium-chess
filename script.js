@@ -699,26 +699,33 @@ function initializeAudio() {
     const bgMusic = document.getElementById('bgMusic');
     const muteBtn = document.getElementById('muteBtn');
     const volumeSlider = document.getElementById('volumeSlider');
+    const audioOverlay = document.getElementById('audioOverlay');
 
-    if (!bgMusic || !muteBtn || !volumeSlider) return;
+    if (!bgMusic || !muteBtn || !volumeSlider || !audioOverlay) return;
 
     // Set initial volume
     bgMusic.volume = volumeSlider.value;
 
-    // Try to autoplay
-    const playAudio = () => {
+    const startAudio = () => {
         bgMusic.play().then(() => {
-            // Once played, remove listeners
-            document.removeEventListener('click', playAudio);
-            document.removeEventListener('keydown', playAudio);
+            audioOverlay.style.opacity = '0';
+            setTimeout(() => {
+                audioOverlay.style.display = 'none';
+            }, 500);
+
+            // Remove the interaction listeners
+            document.removeEventListener('click', startAudio);
+            document.removeEventListener('keydown', startAudio);
         }).catch(err => {
-            console.log("Autoplay blocked. Waiting for interaction.");
+            console.error("Audio playback failed:", err);
         });
     };
 
-    // Browsers block autoplay without interaction
-    document.addEventListener('click', playAudio);
-    document.addEventListener('keydown', playAudio);
+    // The overlay itself or any part of the document triggers the start
+    audioOverlay.addEventListener('click', startAudio);
+
+    // Safety fallback
+    document.addEventListener('keydown', startAudio);
 
     muteBtn.addEventListener('click', () => {
         if (bgMusic.paused) {
@@ -732,15 +739,18 @@ function initializeAudio() {
 
     volumeSlider.addEventListener('input', (e) => {
         bgMusic.volume = e.target.value;
+        const isMuted = muteBtn.textContent === '🔇';
         if (bgMusic.volume === 0) {
             muteBtn.textContent = '🔇';
-        } else if (bgMusic.paused) {
-            // If they move slider while paused, keep it muted icon
-            muteBtn.textContent = '🔇';
-        } else {
+        } else if (!bgMusic.paused) {
             muteBtn.textContent = '🔊';
         }
     });
+
+    // Check if music is already playing (rare but possible)
+    if (!bgMusic.paused) {
+        audioOverlay.style.display = 'none';
+    }
 }
 
 function playSound(type) {

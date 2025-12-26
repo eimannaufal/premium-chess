@@ -30,24 +30,33 @@
                 <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.3" class="volume-slider">
             </div>
             <audio id="bgMusic" loop>
-                <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_c3c3a44d8b.mp3" type="audio/mpeg">
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
 
             <!-- Sound Effects -->
             <audio id="sfxMove" preload="auto">
-                <source src="https://assets.lichess.org/sound/standard/Move.mp3" type="audio/mpeg">
+                <source src="https://lichess1.org/assets/sound/standard/Move.mp3" type="audio/mpeg">
             </audio>
             <audio id="sfxCapture" preload="auto">
-                <source src="https://assets.lichess.org/sound/standard/Capture.mp3" type="audio/mpeg">
+                <source src="https://lichess1.org/assets/sound/standard/Capture.mp3" type="audio/mpeg">
             </audio>
             <audio id="sfxCheck" preload="auto">
-                <source src="https://assets.lichess.org/sound/standard/Check.mp3" type="audio/mpeg">
+                <source src="https://lichess1.org/assets/sound/standard/Check.mp3" type="audio/mpeg">
             </audio>
             <audio id="sfxVictory" preload="auto">
-                <source src="https://assets.lichess.org/sound/standard/Victory.mp3" type="audio/mpeg">
+                <source src="https://lichess1.org/assets/sound/standard/Victory.mp3" type="audio/mpeg">
             </audio>
         </header>
+
+        <!-- Audio Unlock Overlay -->
+        <div id="audioOverlay" class="audio-overlay">
+            <div class="overlay-content">
+                <h2>Welcome to Premium Chess</h2>
+                <p>Click anywhere to start the atmospheric experience</p>
+                <button class="action-btn">Enable Sound & Play</button>
+            </div>
+        </div>
 
         <div class="game-layout">
             <!-- Left Panel - Game Info -->
