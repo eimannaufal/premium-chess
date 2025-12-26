@@ -6,6 +6,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyBJTIrPmc1-ryMkMf8BP2euSFVYiwS_bMU",
     authDomain: "premium-chess-6d0f5.firebaseapp.com",
+    databaseURL: "https://premium-chess-6d0f5-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "premium-chess-6d0f5",
     storageBucket: "premium-chess-6d0f5.firebasestorage.app",
     messagingSenderId: "38471159988",
