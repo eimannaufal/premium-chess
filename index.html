@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Chess - Strategic Board Game</title>
+    <meta name="description"
+        content="Play a beautiful, interactive chess game with elegant design and smooth animations. Perfect for chess enthusiasts.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+
+<body>
+    <div class="background-gradient"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Premium Chess</h1>
+            <p class="subtitle">Master the game of kings</p>
+        </header>
+
+        <div class="game-layout">
+            <!-- Left Panel - Game Info -->
+            <div class="side-panel left-panel">
+                <div class="panel-card" id="multiplayerPanel">
+                    <h2 class="panel-title">🌐 Online Multiplayer</h2>
+                    <div id="multiplayerControls">
+                        <button class="action-btn create-game-btn" id="createGameBtn">
+                            <span class="btn-icon">🎮</span>
+                            Create Online Game
+                        </button>
+                        <div class="or-divider">OR</div>
+                        <div class="join-game-section">
+                            <input type="text" id="gameCodeInput" class="game-code-input" placeholder="Enter Game Code"
+                                maxlength="10">
+                            <button class="action-btn join-game-btn" id="joinGameBtn">
+                                <span class="btn-icon">🔗</span>
+                                Join Game
+                            </button>
+                        </div>
+                    </div>
+                    <div id="connectionStatus" class="connection-status" style="display: none;">
+                        <div class="status-indicator"></div>
+                        <span id="statusText">Connecting...</span>
+                    </div>
+                    <div id="gameCodeDisplay" class="game-code-display" style="display: none;">
+                        <label>Share this link with your friend:</label>
+                        <div class="code-box">
+                            <span id="displayedLink" class="share-link-text"></span>
+                            <button class="copy-btn" id="copyLinkBtn" title="Copy Link">📋</button>
+                        </div>
+                        <div class="code-details">
+                            <small>Game Code: <b id="displayedCode"></b></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <h2 class="panel-title">Game Status</h2>
+                    <div class="status-container">
+                        <div class="current-turn" id="currentTurn">
+                            <span class="turn-label">Current Turn:</span>
+                            <span class="turn-value" id="turnValue">White</span>
+                        </div>
+                        <div class="game-message" id="gameMessage">Make your move</div>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <h2 class="panel-title">Captured Pieces</h2>
+                    <div class="captured-section">
+                        <div class="captured-group">
+                            <span class="captured-label">White Lost:</span>
+                            <div class="captured-pieces" id="capturedWhite"></div>
+                        </div>
+                        <div class="captured-group">
+                            <span class="captured-label">Black Lost:</span>
+                            <div class="captured-pieces" id="capturedBlack"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <button class="action-btn new-game-btn" id="newGameBtn">
+                        <span class="btn-icon">♔</span>
+                        New Local Game
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center - Chess Board -->
+            <div class="board-container">
+                <div class="board-wrapper">
+                    <div class="chess-board" id="chessBoard"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Move History -->
+            <div class="side-panel right-panel">
+                <div class="panel-card">
+                    <h2 class="panel-title">Move History</h2>
+                    <div class="move-history" id="moveHistory">
+                        <div class="no-moves">No moves yet</div>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <h2 class="panel-title">Instructions</h2>
+                    <div class="instructions">
+                        <ul>
+                            <li>Click a piece to select it</li>
+                            <li>Valid moves will be highlighted</li>
+                            <li>Click a highlighted square to move</li>
+                            <li>Capture opponent pieces</li>
+                            <li>Protect your king!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="multiplayer.js"></script>
+</body>
+
+</html>
