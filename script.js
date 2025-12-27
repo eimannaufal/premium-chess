@@ -68,6 +68,12 @@ function initializeGame() {
 
     renderBoard();
     updateUI();
+
+    // Reset board effects
+    const boardWrapper = document.querySelector('.board-wrapper');
+    if (boardWrapper) {
+        boardWrapper.classList.remove('winner', 'loser');
+    }
 }
 
 function createInitialBoard() {
@@ -613,6 +619,20 @@ function checkGameState() {
             const winner = currentColor === 'white' ? 'Black' : 'White';
             showGameMessage(`Checkmate! ${winner} wins! 👑`, 'victory');
             playSound('victory');
+
+            // Visual feedback for board
+            const boardWrapper = document.querySelector('.board-wrapper');
+            if (boardWrapper) {
+                if (gameState.isOnline && gameState.myColor) {
+                    // Online: Blue for me winning, Red for me losing
+                    const myColor = gameState.myColor.toLowerCase();
+                    const winnerColor = winner.toLowerCase();
+                    boardWrapper.classList.add(myColor === winnerColor ? 'winner' : 'loser');
+                } else {
+                    // Local: Always highlight as victory
+                    boardWrapper.classList.add('winner');
+                }
+            }
         } else {
             showGameMessage('Check! Protect your king!', 'warning');
             playSound('check');

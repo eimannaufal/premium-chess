@@ -372,6 +372,43 @@ body {
     border: 1px solid rgba(99, 102, 241, 0.2);
     animation: scaleIn 0.6s ease;
     position: relative;
+    transition: all 1s ease;
+}
+
+.board-wrapper.winner {
+    box-shadow: 0 0 50px rgba(59, 130, 246, 0.8), 0 0 100px rgba(59, 130, 246, 0.4);
+    border-color: rgba(59, 130, 246, 0.8);
+    animation: blueGlowPulse 2s infinite;
+}
+
+.board-wrapper.loser {
+    box-shadow: 0 0 50px rgba(239, 68, 68, 0.8), 0 0 100px rgba(239, 68, 68, 0.4);
+    border-color: rgba(239, 68, 68, 0.8);
+    animation: redGlowPulse 2s infinite;
+}
+
+@keyframes blueGlowPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 50px rgba(59, 130, 246, 0.8), 0 0 100px rgba(59, 130, 246, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 80px rgba(59, 130, 246, 1), 0 0 150px rgba(59, 130, 246, 0.6);
+    }
+}
+
+@keyframes redGlowPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 50px rgba(239, 68, 68, 0.8), 0 0 100px rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 80px rgba(239, 68, 68, 1), 0 0 150px rgba(239, 68, 68, 0.6);
+    }
 }
 
 /* Chess Board Coordinates */
