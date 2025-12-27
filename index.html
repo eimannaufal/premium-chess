@@ -149,9 +149,26 @@
 
 
         <div class="game-layout">
-            <!-- Left Panel Removed - Selections now in Hub -->
+            <!-- Left Panel - Captured Pieces -->
+            <div class="side-panel left-panel">
+                <div class="panel-card captured-card">
+                    <h3 class="panel-title">Captured</h3>
+                    <div class="captured-vertical">
+                        <div class="captured-group">
+                            <span class="captured-label">White Lost</span>
+                            <div class="captured-pieces" id="capturedWhite"></div>
+                        </div>
+                        <div class="captured-divider"></div>
+                        <div class="captured-group">
+                            <span class="captured-label">Black Lost</span>
+                            <div class="captured-pieces" id="capturedBlack"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Center - Chess Board -->
+
 
             <div class="board-container">
                 <div class="board-wrapper">
@@ -186,50 +203,37 @@
 
                         </div>
 
-
-                        <!-- Bottom Right - Captured Pieces -->
-                        <div class="board-mini-panel">
-                            <h3 class="mini-panel-title">Captured</h3>
-                            <div class="captured-section mini-captured">
-                                <div class="captured-group">
-                                    <span class="captured-label">White Lost:</span>
-                                    <div class="captured-pieces" id="capturedWhite"></div>
-                                </div>
-                                <div class="captured-group">
-                                    <span class="captured-label">Black Lost:</span>
-                                    <div class="captured-pieces" id="capturedBlack"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <!-- Right Panel - Move History -->
-            <div class="side-panel right-panel">
-                <div class="panel-card">
-                    <h2 class="panel-title">Move History</h2>
-                    <div class="move-history" id="moveHistory">
-                        <div class="no-moves">No moves yet</div>
-                    </div>
-                </div>
-
-                <div class="panel-card">
-                    <h2 class="panel-title">Instructions</h2>
-                    <div class="instructions">
-                        <ul>
-                            <li>Click a piece to select it</li>
-                            <li>Valid moves will be highlighted</li>
-                            <li>Click a highlighted square to move</li>
-                            <li>Capture opponent pieces</li>
-                            <li>Protect your king!</li>
-                        </ul>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+
+        <!-- Right Panel - Move History -->
+        <div class="side-panel right-panel">
+            <div class="panel-card">
+                <h2 class="panel-title">Move History</h2>
+                <div class="move-history" id="moveHistory">
+                    <div class="no-moves">No moves yet</div>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2 class="panel-title">Instructions</h2>
+                <div class="instructions">
+                    <ul>
+                        <li>Click a piece to select it</li>
+                        <li>Valid moves will be highlighted</li>
+                        <li>Click a highlighted square to move</li>
+                        <li>Capture opponent pieces</li>
+                        <li>Protect your king!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <script src="script.js"></script>

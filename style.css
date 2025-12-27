@@ -120,12 +120,13 @@ body {
 
 .game-layout {
     display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 3rem;
-    max-width: 1300px;
+    grid-template-columns: 260px 1fr 300px;
+    gap: 2rem;
+    max-width: 1400px;
     margin: 0 auto;
     animation: fadeIn 0.8s ease;
 }
+
 
 
 
@@ -1624,11 +1625,73 @@ body {
     margin-top: 1rem;
 }
 
-.version-tag {
-    font-size: 0.7rem;
+
+/* 
+   NEW LAYOUT STYLES 
+   =================================== */
+
+.captured-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.captured-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.captured-label {
+    font-size: 0.75rem;
     color: var(--text-muted);
-    letter-spacing: 1px;
-    font-weight: 600;
     text-transform: uppercase;
-    opacity: 0.6;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.captured-pieces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    min-height: 2.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.5rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.captured-piece {
+    font-size: 1.6rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+    transition: transform 0.2s;
+}
+
+.captured-piece:hover {
+    transform: scale(1.2);
+}
+
+.captured-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+/* Board Bottom Layout Expansion */
+.board-bottom-layout {
+    margin-top: 1.5rem;
+    width: 100%;
+    display: flex;
+}
+
+.board-bottom-layout .board-mini-panel {
+    width: 100%;
+    flex: 1;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
