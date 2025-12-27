@@ -1,7 +1,7 @@
-// Version: 1.0.1 - Firebase Singapore Fix
 // ===================================
 // MULTIPLAYER - FIREBASE INTEGRATION
 // ===================================
+console.log("[MULTIPLAYER] File loaded and executing...");
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -80,19 +80,38 @@ function createOnlineGame() {
     });
 
     // Listen for opponent joining
+    console.log("[MULTIPLAYER] Starting status listener for game:", gameId);
+
     gameRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        if (data && data.status === 'playing' && gameState.isOnline === false) {
+        if (!data) return;
+
+        console.log("[MULTIPLAYER] Data updated. Status:", data.status, "IsOnline:", gameState.isOnline);
+
+        if (data && data.status === 'playing' && !gameState.isOnline) {
+            console.log("[MULTIPLAYER] Opponent detected! Transitioning to Online mode...");
+
+            // Set the state BEFORE calling setupGameListeners
+            gameState.isOnline = true;
+            gameState.myColor = 'white';
+            myColor = 'white'; // Global variable update
+
             showStatus('Connected! You play as White', 'connected');
             setupGameListeners();
 
             // Start a new game
             initializeGame();
+
+            // Restore online status after initializeGame might have reset it
             gameState.isOnline = true;
-            gameState.myColor = myColor;
+            gameState.myColor = 'white';
+
             renderBoard();
             updateUI();
+            console.log("[MULTIPLAYER] Host game ready. Online status confirmed.");
         }
+    }, (error) => {
+        console.error("[MULTIPLAYER] Database listener error:", error);
     });
 }
 
@@ -135,15 +154,29 @@ function joinOnlineGame(code) {
             guest: true
         });
 
+        // Set local state
+        gameState.isOnline = true;
+        gameState.myColor = 'black';
+        myColor = 'black'; // Global variable update
+
+        console.log("[MULTIPLAYER] Successfully joined as Black. ID:", gameId);
         showStatus('Connected! You play as Black', 'connected');
         setupGameListeners();
 
         // Start a new game
         initializeGame();
+
+        // Restore state after init
         gameState.isOnline = true;
-        gameState.myColor = myColor;
+        gameState.myColor = 'black';
+
         renderBoard();
         updateUI();
+    }).catch(error => {
+        console.error("[MULTIPLAYER] Join game failed:", error);
+        alert('Failed to join game. Please check your connection.');
+        showMultiplayerControls();
+        hideStatus();
     });
 }
 
@@ -151,7 +184,8 @@ function setupGameListeners() {
     // Listen for moves
     gameRef.child('lastMove').on('value', (snapshot) => {
         const move = snapshot.val();
-        if (move && move.color !== myColor) {
+        if (move && move.color !== (gameState.myColor || myColor)) {
+            console.log("Received remote move:", move);
             handleRemoteMove(move);
         }
     });
@@ -200,15 +234,16 @@ function handleRemoteMove(move) {
 }
 
 function sendMove(from, to) {
-    if (gameRef) {
+    if (gameRef && gameState.isOnline) {
+        console.log("Sending move to Firebase:", from, to);
         gameRef.update({
             lastMove: {
                 from,
                 to,
-                color: myColor,
+                color: gameState.myColor,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             }
-        });
+        }).catch(err => console.error("Error sending move:", err));
     }
 }
 

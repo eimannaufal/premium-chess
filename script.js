@@ -61,7 +61,9 @@ function initializeGame() {
             white: { kingSide: true, queenSide: true },
             black: { kingSide: true, queenSide: true }
         },
-        hasMoved: { white: { king: false, rookLeft: false, rookRight: false }, black: { king: false, rookLeft: false, rookRight: false } }
+        hasMoved: { white: { king: false, rookLeft: false, rookRight: false }, black: { king: false, rookLeft: false, rookRight: false } },
+        isOnline: false,
+        myColor: null
     };
 
     renderBoard();
