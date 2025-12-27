@@ -964,9 +964,10 @@ function initializeStartOverlay() {
             overlay.classList.add('hidden');
             setInitialTime(selectedMatchDuration);
             initializeGame();
-            showGameMessage(`Local match started! (${selectedMatchDuration}min)`, 'info');
+            autoStartGameTimer();
         });
     }
+
 }
 
 
@@ -1011,7 +1012,31 @@ function stopTimer() {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
     }
+    // Also clear auto-start timeout if it exists
+    if (window.gameStartTimeout) {
+        clearTimeout(window.gameStartTimeout);
+        window.gameStartTimeout = null;
+    }
 }
+
+function autoStartGameTimer() {
+    stopTimer();
+    showGameMessage("Game starts in 5 seconds...", "info");
+
+    window.gameStartTimeout = setTimeout(() => {
+        if (!gameState.isGameOver) {
+            startTimer();
+            showGameMessage("Game started! White's turn.", "info");
+
+            // Hook for AI to move if it's White
+            if (gameState.isAI && gameState.currentTurn === gameState.aiColor) {
+                if (typeof triggerAiMove === 'function') triggerAiMove();
+            }
+        }
+        window.gameStartTimeout = null;
+    }, 5000);
+}
+
 
 function switchTimer() {
     stopTimer();

@@ -54,11 +54,10 @@ function startAiMatch(chosenColor = null, difficulty = null) {
         hideAiPanel();
         showGameMessage(`AI Match Started! (Level ${aiDifficulty})`, 'info');
 
-        // If AI is white, it moves first
-        if (gameState.currentTurn === gameState.aiColor) {
-            setTimeout(triggerAiMove, 600);
-        }
+        // Instead of moving immediately, wait for the autoStartGameTimer to trigger
+        autoStartGameTimer();
     };
+
 
     if (chosenColor) {
         startMatch();

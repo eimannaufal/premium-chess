@@ -123,8 +123,10 @@ function createOnlineGame(chosenColor = 'white') {
 
             renderBoard();
             updateUI();
+            autoStartGameTimer(); // Start the 5s countdown
             console.log("[MULTIPLAYER] Host game ready. Online status confirmed.");
         }
+
 
     }, (error) => {
         console.error("[MULTIPLAYER] Database listener error:", error);
@@ -202,7 +204,7 @@ function joinOnlineGame(code) {
 
         renderBoard();
         updateUI();
-
+        autoStartGameTimer(); // Start 5s countdown
     }).catch(error => {
         console.error("[MULTIPLAYER] Join game failed:", error);
         alert('Failed to join game. Please check your connection.');
