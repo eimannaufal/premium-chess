@@ -2,7 +2,7 @@
 // CHESS GAME - COMPLETE IMPLEMENTATION
 // ===================================
 
-const GAME_VERSION = 'v1.1.5'; // Layout update
+const GAME_VERSION = 'v1.1.6'; // UI Refinement
 
 const PIECES = {
     white: {
@@ -846,9 +846,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeStartOverlay();
 
     // Auto-set version
-    const vTag = document.querySelector('.version-tag');
-    if (vTag) vTag.textContent = `Build ${GAME_VERSION}`;
+    const vTags = document.querySelectorAll('.header-version, .version-tag');
+    vTags.forEach(tag => tag.textContent = `${GAME_VERSION}`);
 });
+
 
 
 

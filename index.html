@@ -23,8 +23,9 @@
 
     <div class="container">
         <header class="header">
-            <h1 class="title">Premium Chess</h1>
+            <h1 class="title">Premium Chess <span class="header-version"></span></h1>
             <p class="subtitle">Master the game of kings</p>
+
 
             <!-- Audio Controls -->
             <div class="audio-controls">
@@ -206,35 +207,18 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-
-
-
-        <!-- Right Panel - Move History -->
-        <div class="side-panel right-panel">
-            <div class="panel-card">
-                <h2 class="panel-title">Move History</h2>
-                <div class="move-history" id="moveHistory">
-                    <div class="no-moves">No moves yet</div>
-                </div>
-            </div>
-
-            <div class="panel-card">
-                <h2 class="panel-title">Instructions</h2>
-                <div class="instructions">
-                    <ul>
-                        <li>Click a piece to select it</li>
-                        <li>Valid moves will be highlighted</li>
-                        <li>Click a highlighted square to move</li>
-                        <li>Capture opponent pieces</li>
-                        <li>Protect your king!</li>
-                    </ul>
+            <!-- Right Panel - Move History -->
+            <div class="side-panel right-panel">
+                <div class="panel-card history-card">
+                    <h2 class="panel-title">Move History</h2>
+                    <div class="move-history" id="moveHistory">
+                        <div class="no-moves">No moves yet</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
+
 
     <script src="script.js"></script>
     <script src="ai.js"></script>
