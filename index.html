@@ -70,7 +70,34 @@
         <div class="game-layout">
             <!-- Left Panel - Game Info -->
             <div class="side-panel left-panel">
+                <div class="panel-card" id="aiPanel">
+                    <h2 class="panel-title">🤖 Play vs Computer</h2>
+                    <div class="ai-controls">
+                        <button class="action-btn ai-start-btn" id="startAiBtn">
+                            <span class="btn-icon">💻</span>
+                            Start AI Match
+                        </button>
+                        <div class="difficulty-section">
+                            <div class="difficulty-header">
+                                <span>Difficulty Level</span>
+                                <span id="difficultyDisplay" class="difficulty-value">Level 5</span>
+                            </div>
+                            <input type="range" id="aiDifficulty" min="1" max="10" step="1" value="5"
+                                class="difficulty-slider">
+                            <div class="difficulty-labels">
+                                <span>Novice</span>
+                                <span>Grandmaster</span>
+                            </div>
+                        </div>
+                        <div id="aiStatus" class="ai-status" style="display: none;">
+                            <div class="status-indicator"></div>
+                            <span id="aiStatusText">AI is thinking...</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel-card" id="multiplayerPanel">
+
                     <h2 class="panel-title">🌐 Online Multiplayer</h2>
                     <div id="multiplayerControls">
                         <button class="action-btn create-game-btn" id="createGameBtn">
@@ -169,7 +196,9 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="ai.js"></script>
     <script src="multiplayer.js?v=1.0.2"></script>
 </body>
+
 
 </html>

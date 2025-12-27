@@ -39,8 +39,11 @@ let gameState = {
     },
     hasMoved: { white: { king: false, rookLeft: false, rookRight: false }, black: { king: false, rookLeft: false, rookRight: false } },
     isOnline: false,
-    myColor: null
+    myColor: null,
+    isAI: false,
+    aiColor: null
 };
+
 
 // ===================================
 // INITIALIZATION
@@ -63,8 +66,11 @@ function initializeGame() {
         },
         hasMoved: { white: { king: false, rookLeft: false, rookRight: false }, black: { king: false, rookLeft: false, rookRight: false } },
         isOnline: false,
-        myColor: null
+        myColor: null,
+        isAI: false,
+        aiColor: null
     };
+
 
     renderBoard();
     updateUI();
