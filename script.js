@@ -2,7 +2,8 @@
 // CHESS GAME - COMPLETE IMPLEMENTATION
 // ===================================
 
-// Chess Piece Symbols (Unicode)
+const GAME_VERSION = 'v1.1.4'; // Updated version
+
 const PIECES = {
     white: {
         king: '♔',
@@ -844,10 +845,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeAudio();
     initializeStartOverlay();
 
-    // The 'New Local Game' in the game itself can still use initializeGame()
-    // but the sidebar is gone. We could add a reset button to move history or board.
-    // For now, let's keep it simple.
+    // Auto-set version
+    const vTag = document.querySelector('.version-tag');
+    if (vTag) vTag.textContent = `Build ${GAME_VERSION}`;
 });
+
 
 
 function initializeStartOverlay() {
