@@ -60,12 +60,12 @@ function initializeMultiplayer() {
     }
 }
 
-function createOnlineGame() {
+function createOnlineGame(chosenColor = 'white') {
     gameId = generateGameCode();
     gameRef = database.ref('games/' + gameId);
 
     isHost = true;
-    myColor = 'white';
+    myColor = chosenColor;
 
     showStatus('Waiting for opponent...');
     showGameCode(gameId);
@@ -76,8 +76,10 @@ function createOnlineGame() {
         host: true,
         moves: [],
         resetRequest: false,
-        status: 'waiting'
+        status: 'waiting',
+        hostColor: chosenColor
     });
+
 
     // Listen for opponent joining
     console.log("[MULTIPLAYER] Starting status listener for game:", gameId);
@@ -91,12 +93,14 @@ function createOnlineGame() {
         if (data && data.status === 'playing' && !gameState.isOnline) {
             console.log("[MULTIPLAYER] Opponent detected! Transitioning to Online mode...");
 
+            const hostCol = data.hostColor || 'white';
+
             // Set the state BEFORE calling setupGameListeners
             gameState.isOnline = true;
-            gameState.myColor = 'white';
-            myColor = 'white'; // Global variable update
+            gameState.myColor = hostCol;
+            myColor = hostCol; // Global variable update
 
-            showStatus('Connected! You play as White', 'connected');
+            showStatus(`Connected! You play as ${hostCol.charAt(0).toUpperCase() + hostCol.slice(1)}`, 'connected');
             setupGameListeners();
 
             // Start a new game
@@ -104,12 +108,13 @@ function createOnlineGame() {
 
             // Restore online status after initializeGame might have reset it
             gameState.isOnline = true;
-            gameState.myColor = 'white';
+            gameState.myColor = hostCol;
 
             renderBoard();
             updateUI();
             console.log("[MULTIPLAYER] Host game ready. Online status confirmed.");
         }
+
     }, (error) => {
         console.error("[MULTIPLAYER] Database listener error:", error);
     });
@@ -146,7 +151,9 @@ function joinOnlineGame(code) {
         }
 
         isHost = false;
-        myColor = 'black';
+        const hostCol = data.hostColor || 'white';
+        const guestCol = hostCol === 'white' ? 'black' : 'white';
+        myColor = guestCol;
 
         // Update status to playing
         gameRef.update({
@@ -156,11 +163,11 @@ function joinOnlineGame(code) {
 
         // Set local state
         gameState.isOnline = true;
-        gameState.myColor = 'black';
-        myColor = 'black'; // Global variable update
+        gameState.myColor = guestCol;
+        myColor = guestCol; // Global variable update
 
-        console.log("[MULTIPLAYER] Successfully joined as Black. ID:", gameId);
-        showStatus('Connected! You play as Black', 'connected');
+        console.log(`[MULTIPLAYER] Successfully joined as ${guestCol}. ID:`, gameId);
+        showStatus(`Connected! You play as ${guestCol.charAt(0).toUpperCase() + guestCol.slice(1)}`, 'connected');
         setupGameListeners();
 
         // Start a new game
@@ -168,10 +175,11 @@ function joinOnlineGame(code) {
 
         // Restore state after init
         gameState.isOnline = true;
-        gameState.myColor = 'black';
+        gameState.myColor = guestCol;
 
         renderBoard();
         updateUI();
+
     }).catch(error => {
         console.error("[MULTIPLAYER] Join game failed:", error);
         alert('Failed to join game. Please check your connection.');

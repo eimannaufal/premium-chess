@@ -58,14 +58,64 @@
             </audio>
         </header>
 
-        <!-- Audio Unlock Overlay -->
-        <div id="audioOverlay" class="audio-overlay">
-            <div class="overlay-content">
-                <h2>Welcome to Premium Chess</h2>
-                <p>Click anywhere to start the atmospheric experience</p>
-                <button class="action-btn">Enable Sound & Play</button>
+        <!-- Main Entry Overlay -->
+        <div id="startOverlay" class="start-overlay">
+            <div class="overlay-card entry-card">
+                <header class="entry-header">
+                    <h2 class="entry-title">Welcome to Premium Chess</h2>
+                    <p class="entry-subtitle">Choose your challenge</p>
+                </header>
+
+                <div class="mode-selector">
+                    <!-- AI Mode Card -->
+                    <div class="mode-card ai-mode">
+                        <div class="mode-icon">🤖</div>
+                        <h3>Play vs AI</h3>
+                        <div class="mode-settings">
+                            <div class="entry-setting">
+                                <label>Difficulty</label>
+                                <input type="range" id="overlayAiDifficulty" min="1" max="10" value="5">
+                                <span class="difficulty-label">Level 5</span>
+                            </div>
+                            <div class="entry-setting">
+                                <label>Your Side</label>
+                                <div class="entry-color-grid">
+                                    <button class="entry-color-btn active" data-color="white">White</button>
+                                    <button class="entry-color-btn" data-color="black">Black</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="entry-action-btn ai-btn" id="startAiMatchBtn">Start Engine</button>
+                    </div>
+
+                    <!-- Online Mode Card -->
+                    <div class="mode-card online-mode">
+                        <div class="mode-icon">🌐</div>
+                        <h3>Multiplayer</h3>
+                        <div class="mode-settings">
+                            <div class="entry-setting">
+                                <label>Host as</label>
+                                <div class="entry-color-grid">
+                                    <button class="entry-color-btn active" data-host-color="white">White</button>
+                                    <button class="entry-color-btn" data-host-color="black">Black</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="entry-action-btn online-btn" id="startOnlineMatchBtn">Create Online Game</button>
+                        <div class="join-divider">or join via code below</div>
+                    </div>
+
+                    <!-- Local Mode Card -->
+                    <div class="mode-card local-mode">
+                        <div class="mode-icon">♔</div>
+                        <h3>Local Game</h3>
+                        <p class="mode-desc">Play with a friend on the same device</p>
+                        <button class="entry-action-btn local-btn" id="startLocalMatchBtn">Start Local</button>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <div class="game-layout">
             <!-- Left Panel - Game Info -->

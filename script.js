@@ -843,6 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeGame();
     initializeAudio();
     initializeTimerSettings();
+    initializeStartOverlay();
 
     const newGameBtn = document.getElementById('newGameBtn');
     if (newGameBtn) {
@@ -854,6 +855,99 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function initializeStartOverlay() {
+    const overlay = document.getElementById('startOverlay');
+    if (!overlay) return;
+
+    // Check for game link auto-bypass
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('game')) {
+        overlay.classList.add('hidden');
+        return;
+    }
+
+    // AI Mode Elements
+    const aiDiffSlider = document.getElementById('overlayAiDifficulty');
+    const aiDiffLabel = document.querySelector('.ai-mode .difficulty-label');
+    const aiColorBtns = document.querySelectorAll('.ai-mode .entry-color-btn');
+    const startAiBtn = document.getElementById('startAiMatchBtn');
+
+    // Online Mode Elements
+    const onlineColorBtns = document.querySelectorAll('.online-mode .entry-color-btn');
+    const startOnlineBtn = document.getElementById('startOnlineMatchBtn');
+
+    // Local Mode Elements
+    const startLocalBtn = document.getElementById('startLocalMatchBtn');
+
+    let aiColor = 'white';
+    let hostColor = 'white';
+
+    // Difficulty Sync
+    if (aiDiffSlider) {
+        aiDiffSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            aiDiffLabel.textContent = `Level ${val}`;
+            // Sync with sidebar slider
+            const sidebarSlider = document.getElementById('aiDifficulty');
+            if (sidebarSlider) {
+                sidebarSlider.value = val;
+                const sidebarDisplay = document.getElementById('difficultyDisplay');
+                if (sidebarDisplay) sidebarDisplay.textContent = `Level ${val}`;
+            }
+        });
+    }
+
+    // AI Color Selection
+    aiColorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            aiColorBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            aiColor = btn.dataset.color;
+        });
+    });
+
+    // Online Color Selection
+    onlineColorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            onlineColorBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            hostColor = btn.dataset.hostColor;
+        });
+    });
+
+    // Actions
+    if (startAiBtn) {
+        startAiBtn.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            if (typeof startAiMatch === 'function') {
+                startAiMatch(aiColor, parseInt(aiDiffSlider.value));
+            }
+        });
+    }
+
+    if (startOnlineBtn) {
+        startOnlineBtn.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            if (typeof createOnlineGame === 'function') {
+                createOnlineGame(hostColor);
+            }
+        });
+    }
+
+    if (startLocalBtn) {
+        startLocalBtn.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            initializeGame();
+            showGameMessage('Local match started!', 'info');
+        });
+    }
+}
+
+// End of initializeStartOverlay
+
+
+
 
 // ===================================
 // TIMER LOGIC

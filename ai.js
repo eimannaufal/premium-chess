@@ -63,13 +63,17 @@ function handleEngineMessage(event) {
     }
 }
 
-function startAiMatch() {
-    if (confirm(`Start match against AI as ${playerChosenColor.charAt(0).toUpperCase() + playerChosenColor.slice(1)}? This will reset the current game.`)) {
+function startAiMatch(chosenColor = null, difficulty = null) {
+    const finalColor = chosenColor || playerChosenColor;
+    const finalDiff = difficulty || aiDifficulty;
+
+    const startMatch = () => {
         initializeGame();
         gameState.isOnline = false;
         gameState.isAI = true;
-        gameState.myColor = playerChosenColor;
-        gameState.aiColor = playerChosenColor === 'white' ? 'black' : 'white';
+        gameState.myColor = finalColor;
+        gameState.aiColor = finalColor === 'white' ? 'black' : 'white';
+        aiDifficulty = finalDiff; // Sync global difficulty
 
         hideAiPanel();
         showGameMessage(`AI Match Started! (Level ${aiDifficulty})`, 'info');
@@ -78,8 +82,15 @@ function startAiMatch() {
         if (gameState.currentTurn === gameState.aiColor) {
             setTimeout(triggerAiMove, 600);
         }
+    };
+
+    if (chosenColor) {
+        startMatch();
+    } else if (confirm(`Start match against AI as ${finalColor.charAt(0).toUpperCase() + finalColor.slice(1)}? This will reset the current game.`)) {
+        startMatch();
     }
 }
+
 
 
 function triggerAiMove() {
