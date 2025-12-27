@@ -2,7 +2,7 @@
 // CHESS GAME - COMPLETE IMPLEMENTATION
 // ===================================
 
-const GAME_VERSION = 'v1.1.4'; // Updated version
+const GAME_VERSION = 'v1.1.5'; // Layout update
 
 const PIECES = {
     white: {
