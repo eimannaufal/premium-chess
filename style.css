@@ -125,6 +125,7 @@ body {
     animation: fadeIn 0.8s ease;
 }
 
+
 /* ===================================
    SIDE PANELS
    =================================== */
@@ -361,7 +362,7 @@ body {
 .board-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .board-wrapper {
@@ -371,9 +372,12 @@ body {
     box-shadow: var(--shadow-xl);
     border: 1px solid rgba(99, 102, 241, 0.2);
     animation: scaleIn 0.6s ease;
-    position: relative;
+    position: sticky;
+    top: 2rem;
+    z-index: 10;
     transition: all 1s ease;
 }
+
 
 .board-wrapper.winner {
     box-shadow: 0 0 50px rgba(59, 130, 246, 0.8), 0 0 100px rgba(59, 130, 246, 0.4);
@@ -1061,7 +1065,15 @@ body {
     color: var(--text-secondary);
     margin-bottom: 2rem;
 }
+
 @keyframes goldGlowPulse {
-    0%, 100% { box-shadow: 0 0 50px rgba(234, 179, 8, 0.8), 0 0 100px rgba(234, 179, 8, 0.4); }
-    50% { box-shadow: 0 0 80px rgba(234, 179, 8, 1), 0 0 150px rgba(234, 179, 8, 0.6); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 50px rgba(234, 179, 8, 0.8), 0 0 100px rgba(234, 179, 8, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 80px rgba(234, 179, 8, 1), 0 0 150px rgba(234, 179, 8, 0.6);
+    }
 }
