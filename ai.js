@@ -9,34 +9,10 @@ let isAiThinking = false;
 let playerChosenColor = 'white';
 
 function initializeAI() {
-    const startAiBtn = document.getElementById('startAiBtn');
-    const difficultySlider = document.getElementById('aiDifficulty');
-    const difficultyDisplay = document.getElementById('difficultyDisplay');
-    const colorBtns = document.querySelectorAll('.color-btn');
-
-    if (startAiBtn) {
-        startAiBtn.addEventListener('click', startAiMatch);
-    }
-
-    if (colorBtns) {
-        colorBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                colorBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                playerChosenColor = btn.dataset.color;
-            });
-        });
-    }
-
-
-    if (difficultySlider) {
-        difficultySlider.addEventListener('input', (e) => {
-            aiDifficulty = parseInt(e.target.value);
-            difficultyDisplay.textContent = `Level ${aiDifficulty}`;
-        });
-    }
+    // UI listeners removed as they are now handled by the Start Hub in script.js
 
     // Try to load the engine in a worker
+
     try {
         engine = new Worker(STOCKFISH_URL);
         engine.onmessage = handleEngineMessage;

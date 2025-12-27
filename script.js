@@ -842,19 +842,13 @@ function playSound(type) {
 document.addEventListener('DOMContentLoaded', () => {
     initializeGame();
     initializeAudio();
-    initializeTimerSettings();
     initializeStartOverlay();
 
-    const newGameBtn = document.getElementById('newGameBtn');
-    if (newGameBtn) {
-        newGameBtn.addEventListener('click', () => {
-            if (confirm('Start a new game? Current progress will be lost.')) {
-                initializeGame();
-                showGameMessage('New game started! Good luck!', 'info');
-            }
-        });
-    }
+    // The 'New Local Game' in the game itself can still use initializeGame()
+    // but the sidebar is gone. We could add a reset button to move history or board.
+    // For now, let's keep it simple.
 });
+
 
 function initializeStartOverlay() {
     const overlay = document.getElementById('startOverlay');
@@ -880,10 +874,40 @@ function initializeStartOverlay() {
     // Local Mode Elements
     const startLocalBtn = document.getElementById('startLocalMatchBtn');
 
+    // Global Timer Elements
+    const hubTimerBtns = document.querySelectorAll('.hub-timer-btn');
+    const hubCustomInput = document.getElementById('hubCustomTime');
+
     let aiColor = 'white';
     let hostColor = 'white';
+    let selectedMatchDuration = 10; // Default 10 min
+    setInitialTime(10); // Sync initial state
+
+    // Global Timer Logic
+
+    hubTimerBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            hubTimerBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedMatchDuration = parseInt(btn.dataset.time);
+            if (hubCustomInput) hubCustomInput.value = '';
+            setInitialTime(selectedMatchDuration);
+        });
+    });
+
+    if (hubCustomInput) {
+        hubCustomInput.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            if (val > 0) {
+                hubTimerBtns.forEach(b => b.classList.remove('active'));
+                selectedMatchDuration = val;
+                setInitialTime(selectedMatchDuration);
+            }
+        });
+    }
 
     // Difficulty Sync
+
     if (aiDiffSlider) {
         aiDiffSlider.addEventListener('input', (e) => {
             const val = e.target.value;
@@ -938,11 +962,13 @@ function initializeStartOverlay() {
     if (startLocalBtn) {
         startLocalBtn.addEventListener('click', () => {
             overlay.classList.add('hidden');
+            setInitialTime(selectedMatchDuration);
             initializeGame();
-            showGameMessage('Local match started!', 'info');
+            showGameMessage(`Local match started! (${selectedMatchDuration}min)`, 'info');
         });
     }
 }
+
 
 // End of initializeStartOverlay
 
@@ -953,30 +979,8 @@ function initializeStartOverlay() {
 // TIMER LOGIC
 // ===================================
 
-function initializeTimerSettings() {
-    const presets = document.querySelectorAll('.timer-preset-btn');
-    const customInput = document.getElementById('customTimeInput');
+// initializeTimerSettings removed - handled by start overlay
 
-    presets.forEach(btn => {
-        btn.addEventListener('click', () => {
-            presets.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const mins = parseInt(btn.dataset.time);
-            setInitialTime(mins);
-            if (customInput) customInput.value = '';
-        });
-    });
-
-    if (customInput) {
-        customInput.addEventListener('input', (e) => {
-            const mins = parseInt(e.target.value);
-            if (mins > 0) {
-                presets.forEach(b => b.classList.remove('active'));
-                setInitialTime(mins);
-            }
-        });
-    }
-}
 
 function setInitialTime(mins) {
     const seconds = mins * 60;

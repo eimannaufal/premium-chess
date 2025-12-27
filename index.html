@@ -62,11 +62,27 @@
         <div id="startOverlay" class="start-overlay">
             <div class="overlay-card entry-card">
                 <header class="entry-header">
-                    <h2 class="entry-title">Welcome to Premium Chess</h2>
-                    <p class="entry-subtitle">Choose your challenge</p>
+                    <h2 class="entry-title">Premium Chess</h2>
+                    <p class="entry-subtitle">Master Your Move</p>
                 </header>
 
+                <!-- Global Time Control Hub -->
+                <div class="global-time-control">
+                    <span class="hub-label">⏱️ Select Match Duration</span>
+                    <div class="hub-timer-options">
+                        <button class="hub-timer-btn" data-time="5">5m</button>
+                        <button class="hub-timer-btn active" data-time="10">10m</button>
+                        <button class="hub-timer-btn" data-time="30">30m</button>
+                        <button class="hub-timer-btn" data-time="45">45m</button>
+                        <div class="hub-custom-input">
+                            <input type="number" id="hubCustomTime" placeholder="Custom" min="1" max="180">
+                            <span>min</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mode-selector">
+
                     <!-- AI Mode Card -->
                     <div class="mode-card ai-mode">
                         <div class="mode-icon">🤖</div>
@@ -101,9 +117,17 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="entry-action-btn online-btn" id="startOnlineMatchBtn">Create Online Game</button>
-                        <div class="join-divider">or join via code below</div>
+                        <button class="entry-action-btn online-btn" id="startOnlineMatchBtn">Create New Game</button>
+
+                        <div class="hub-join-section">
+                            <div class="hub-divider"><span>OR JOIN GAME</span></div>
+                            <div class="hub-join-input-group">
+                                <input type="text" id="hubGameCodeInput" placeholder="Enter Code">
+                                <button id="hubJoinGameBtn">Join</button>
+                            </div>
+                        </div>
                     </div>
+
 
                     <!-- Local Mode Card -->
                     <div class="mode-card local-mode">
@@ -118,110 +142,10 @@
 
 
         <div class="game-layout">
-            <!-- Left Panel - Game Info -->
-            <div class="side-panel left-panel">
-                <div class="panel-card" id="aiPanel">
-                    <h2 class="panel-title">🤖 Play vs Computer</h2>
-                    <div class="ai-controls">
-                        <button class="action-btn ai-start-btn" id="startAiBtn">
-                            <span class="btn-icon">💻</span>
-                            Start AI Match
-                        </button>
-                        <div class="difficulty-section">
-                            <div class="difficulty-header">
-                                <span>Difficulty Level</span>
-                                <span id="difficultyDisplay" class="difficulty-value">Level 5</span>
-                            </div>
-                            <input type="range" id="aiDifficulty" min="1" max="10" step="1" value="5"
-                                class="difficulty-slider">
-                            <div class="difficulty-labels">
-                                <span>Novice</span>
-                                <span>Grandmaster</span>
-                            </div>
-                        </div>
-                        <div class="color-selection">
-                            <span class="selection-label">Select Your Side</span>
-                            <div class="color-options">
-                                <button class="color-btn white-side active" data-color="white">
-                                    <div class="color-icon white">♔</div>
-                                    <span class="color-name">White</span>
-                                </button>
-                                <button class="color-btn black-side" data-color="black">
-                                    <div class="color-icon black">♚</div>
-                                    <span class="color-name">Black</span>
-                                </button>
-                            </div>
-                        </div>
-
-
-                        <div id="aiStatus" class="ai-status" style="display: none;">
-                            <div class="status-indicator"></div>
-                            <span id="aiStatusText">AI is thinking...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-card" id="multiplayerPanel">
-
-                    <h2 class="panel-title">🌐 Online Multiplayer</h2>
-                    <div id="multiplayerControls">
-                        <button class="action-btn create-game-btn" id="createGameBtn">
-                            <span class="btn-icon">🎮</span>
-                            Create Online Game
-                        </button>
-                        <div class="or-divider">OR</div>
-                        <div class="join-game-section">
-                            <input type="text" id="gameCodeInput" class="game-code-input" placeholder="Enter Game Code"
-                                maxlength="10">
-                            <button class="action-btn join-game-btn" id="joinGameBtn">
-                                <span class="btn-icon">🔗</span>
-                                Join Game
-                            </button>
-                        </div>
-                    </div>
-                    <div id="connectionStatus" class="connection-status" style="display: none;">
-                        <div class="status-indicator"></div>
-                        <span id="statusText">Connecting...</span>
-                    </div>
-                    <div id="gameCodeDisplay" class="game-code-display" style="display: none;">
-                        <label>Share this link with your friend:</label>
-                        <div class="code-box">
-                            <span id="displayedLink" class="share-link-text"></span>
-                            <button class="copy-btn" id="copyLinkBtn" title="Copy Link">📋</button>
-                        </div>
-                        <div class="code-details">
-                            <small>Game Code: <b id="displayedCode"></b></small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-card" id="timerSettingsPanel">
-                    <h2 class="panel-title">⏱️ Match Settings</h2>
-                    <div class="timer-settings">
-                        <span class="selection-label">Time Control</span>
-                        <div class="timer-presets">
-                            <button class="timer-preset-btn" data-time="5">5m</button>
-                            <button class="timer-preset-btn active" data-time="30">30m</button>
-                            <button class="timer-preset-btn" data-time="45">45m</button>
-                        </div>
-                        <div class="custom-timer-group">
-                            <input type="number" id="customTimeInput" placeholder="Custom" min="1" max="180">
-                            <span class="unit">min</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-card">
-
-                    <button class="action-btn new-game-btn" id="newGameBtn">
-                        <span class="btn-icon">♔</span>
-                        New Local Game
-                    </button>
-                </div>
-
-            </div>
+            <!-- Left Panel Removed - Selections now in Hub -->
 
             <!-- Center - Chess Board -->
+
             <div class="board-container">
                 <div class="board-wrapper">
                     <div class="board-main-area">

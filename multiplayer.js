@@ -25,16 +25,25 @@ let myColor = null; // 'white' or 'black'
 
 // Initialize multiplayer  
 function initializeMultiplayer() {
-    const createBtn = document.getElementById('createGameBtn');
-    const joinBtn = document.getElementById('joinGameBtn');
-    const gameCodeInput = document.getElementById('gameCodeInput');
+    // Note: The 'Create' button is handled in initializeStartOverlay in script.js
+
+    const joinBtn = document.getElementById('hubJoinGameBtn');
+    const gameCodeInput = document.getElementById('hubGameCodeInput');
     const copyLinkBtn = document.getElementById('copyLinkBtn');
 
-    createBtn.addEventListener('click', createOnlineGame);
-    joinBtn.addEventListener('click', () => joinOnlineGame(gameCodeInput.value.trim()));
+    if (joinBtn && gameCodeInput) {
+        joinBtn.addEventListener('click', () => joinOnlineGame(gameCodeInput.value.trim()));
+
+        gameCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                joinOnlineGame(gameCodeInput.value.trim());
+            }
+        });
+    }
 
     if (copyLinkBtn) {
         copyLinkBtn.addEventListener('click', () => {
+
             const link = document.getElementById('displayedLink').textContent;
             navigator.clipboard.writeText(link).then(() => {
                 const originalText = copyLinkBtn.innerHTML;
@@ -77,8 +86,10 @@ function createOnlineGame(chosenColor = 'white') {
         moves: [],
         resetRequest: false,
         status: 'waiting',
-        hostColor: chosenColor
+        hostColor: chosenColor,
+        initialTime: gameState.timers.initial
     });
+
 
 
     // Listen for opponent joining
@@ -126,7 +137,12 @@ function joinOnlineGame(code) {
         return;
     }
 
+    // If joining from Hub, hide Hub
+    const overlay = document.getElementById('startOverlay');
+    if (overlay) overlay.classList.add('hidden');
+
     const cleanCode = code.toUpperCase();
+
     gameId = cleanCode;
     gameRef = database.ref('games/' + cleanCode);
 
@@ -165,6 +181,13 @@ function joinOnlineGame(code) {
         gameState.isOnline = true;
         gameState.myColor = guestCol;
         myColor = guestCol; // Global variable update
+
+        // Sync timer from host
+        if (data.initialTime) {
+            console.log("[MULTIPLAYER] Syncing timer from host:", data.initialTime);
+            setInitialTime(data.initialTime / 60);
+        }
+
 
         console.log(`[MULTIPLAYER] Successfully joined as ${guestCol}. ID:`, gameId);
         showStatus(`Connected! You play as ${guestCol.charAt(0).toUpperCase() + guestCol.slice(1)}`, 'connected');

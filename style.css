@@ -120,10 +120,13 @@ body {
 
 .game-layout {
     display: grid;
-    grid-template-columns: 300px 1fr 300px;
-    gap: 2rem;
+    grid-template-columns: 1fr 320px;
+    gap: 3rem;
+    max-width: 1300px;
+    margin: 0 auto;
     animation: fadeIn 0.8s ease;
 }
+
 
 
 /* ===================================
@@ -1416,4 +1419,163 @@ body {
     50% {
         background: rgba(239, 68, 68, 0.2);
     }
+}
+
+/* Global Time Hub */
+.global-time-control {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.hub-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.hub-timer-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hub-timer-btn {
+    padding: 0.75rem 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.3s;
+    min-width: 80px;
+}
+
+.hub-timer-btn:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.hub-timer-btn.active {
+    background: var(--accent-gradient);
+    border-color: var(--accent-primary);
+    color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.hub-custom-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hub-custom-input input {
+    width: 60px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+}
+
+.hub-custom-input span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Responsive Hub */
+@media (max-width: 900px) {
+    .mode-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .entry-card {
+        padding: 2rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+.hub-join-section {
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.hub-divider {
+    position: relative;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.hub-divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hub-divider span {
+    position: relative;
+    background: rgba(25, 32, 56, 1);
+    padding: 0 10px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+
+.hub-join-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hub-join-input-group input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.hub-join-input-group input:focus {
+    border-color: var(--accent-primary);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.hub-join-input-group button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    padding: 0 1.5rem;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.hub-join-input-group button:hover {
+    background: var(--accent-primary);
+    transform: translateX(2px);
 }
