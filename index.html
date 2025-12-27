@@ -145,7 +145,24 @@
                     </div>
                 </div>
 
+                <div class="panel-card" id="timerSettingsPanel">
+                    <h2 class="panel-title">⏱️ Match Settings</h2>
+                    <div class="timer-settings">
+                        <span class="selection-label">Time Control</span>
+                        <div class="timer-presets">
+                            <button class="timer-preset-btn" data-time="5">5m</button>
+                            <button class="timer-preset-btn active" data-time="30">30m</button>
+                            <button class="timer-preset-btn" data-time="45">45m</button>
+                        </div>
+                        <div class="custom-timer-group">
+                            <input type="number" id="customTimeInput" placeholder="Custom" min="1" max="180">
+                            <span class="unit">min</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel-card">
+
                     <button class="action-btn new-game-btn" id="newGameBtn">
                         <span class="btn-icon">♔</span>
                         New Local Game
@@ -165,6 +182,16 @@
                         <div class="board-mini-panel">
                             <h3 class="mini-panel-title">Game Status</h3>
                             <div class="status-container">
+                                <div class="timers-container">
+                                    <div class="player-timer white-timer" id="whiteTimerContainer">
+                                        <span class="timer-label">White</span>
+                                        <span class="timer-value" id="whiteTimer">30:00</span>
+                                    </div>
+                                    <div class="player-timer black-timer" id="blackTimerContainer">
+                                        <span class="timer-label">Black</span>
+                                        <span class="timer-value" id="blackTimer">30:00</span>
+                                    </div>
+                                </div>
                                 <div class="current-turn mini-turn" id="currentTurn">
                                     <span class="turn-label">Turn:</span>
                                     <span class="turn-value" id="turnValue">White</span>
@@ -172,6 +199,7 @@
                                 <div class="game-message mini-message" id="gameMessage">Make your move</div>
                             </div>
                         </div>
+
 
                         <!-- Bottom Right - Captured Pieces -->
                         <div class="board-mini-panel">

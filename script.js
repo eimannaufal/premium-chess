@@ -41,8 +41,11 @@ let gameState = {
     isOnline: false,
     myColor: null,
     isAI: false,
-    aiColor: null
+    aiColor: null,
+    timers: { white: 1800, black: 1800, initial: 1800 },
+    timerInterval: null
 };
+
 
 
 // ===================================
@@ -68,8 +71,14 @@ function initializeGame() {
         isOnline: false,
         myColor: null,
         isAI: false,
-        aiColor: null
+        aiColor: null,
+        timers: { white: gameState.timers.initial, black: gameState.timers.initial, initial: gameState.timers.initial },
+        timerInterval: null
     };
+
+    stopTimer();
+    updateTimerDisplay();
+
 
 
     renderBoard();
@@ -339,7 +348,11 @@ function movePiece(from, to) {
     // Switch turns
     gameState.currentTurn = gameState.currentTurn === 'white' ? 'black' : 'white';
 
+    // Switch Timers
+    switchTimer();
+
     // Check for check/checkmate
+
     checkGameState();
 }
 
@@ -829,6 +842,7 @@ function playSound(type) {
 document.addEventListener('DOMContentLoaded', () => {
     initializeGame();
     initializeAudio();
+    initializeTimerSettings();
 
     const newGameBtn = document.getElementById('newGameBtn');
     if (newGameBtn) {
@@ -840,6 +854,111 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ===================================
+// TIMER LOGIC
+// ===================================
+
+function initializeTimerSettings() {
+    const presets = document.querySelectorAll('.timer-preset-btn');
+    const customInput = document.getElementById('customTimeInput');
+
+    presets.forEach(btn => {
+        btn.addEventListener('click', () => {
+            presets.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const mins = parseInt(btn.dataset.time);
+            setInitialTime(mins);
+            if (customInput) customInput.value = '';
+        });
+    });
+
+    if (customInput) {
+        customInput.addEventListener('input', (e) => {
+            const mins = parseInt(e.target.value);
+            if (mins > 0) {
+                presets.forEach(b => b.classList.remove('active'));
+                setInitialTime(mins);
+            }
+        });
+    }
+}
+
+function setInitialTime(mins) {
+    const seconds = mins * 60;
+    gameState.timers.initial = seconds;
+    gameState.timers.white = seconds;
+    gameState.timers.black = seconds;
+    updateTimerDisplay();
+}
+
+function startTimer() {
+    if (gameState.timerInterval || gameState.isGameOver) return;
+
+    gameState.timerInterval = setInterval(() => {
+        const turn = gameState.currentTurn;
+        gameState.timers[turn]--;
+
+        if (gameState.timers[turn] <= 0) {
+            gameState.timers[turn] = 0;
+            handleTimeout(turn);
+        }
+
+        updateTimerDisplay();
+    }, 1000);
+}
+
+function stopTimer() {
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+    }
+}
+
+function switchTimer() {
+    stopTimer();
+    if (!gameState.isGameOver) {
+        startTimer();
+    }
+}
+
+function updateTimerDisplay() {
+    const whiteEl = document.getElementById('whiteTimer');
+    const blackEl = document.getElementById('blackTimer');
+    const whiteCont = document.getElementById('whiteTimerContainer');
+    const blackCont = document.getElementById('blackTimerContainer');
+
+    if (whiteEl) whiteEl.textContent = formatTime(gameState.timers.white);
+    if (blackEl) blackEl.textContent = formatTime(gameState.timers.black);
+
+    if (whiteCont && blackCont) {
+        whiteCont.classList.toggle('active', gameState.currentTurn === 'white');
+        blackCont.classList.toggle('active', gameState.currentTurn === 'black');
+
+        whiteCont.classList.toggle('low-time', gameState.timers.white < 30);
+        blackCont.classList.toggle('low-time', gameState.timers.black < 30);
+    }
+}
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function handleTimeout(color) {
+    stopTimer();
+    gameState.isGameOver = true;
+    const winner = color === 'white' ? 'Black' : 'White';
+    showGameMessage(`Time's up! ${winner} wins on time! ⌛`, 'victory');
+    playSound('victory');
+
+    const boardWrapper = document.querySelector('.board-wrapper');
+    if (boardWrapper) {
+        boardWrapper.classList.add('winner');
+    }
+}
+
 
 // ===================================
 // UTILITY FUNCTIONS

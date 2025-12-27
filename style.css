@@ -1300,3 +1300,125 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+/* ===================================
+   TIMER STYLES
+   =================================== */
+.timer-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.timer-presets {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.timer-preset-btn {
+    flex: 1;
+    padding: 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-weight: 600;
+}
+
+.timer-preset-btn:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.timer-preset-btn.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.custom-timer-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.custom-timer-group input {
+    width: 60px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+}
+
+.custom-timer-group .unit {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Timer Display in Game Status */
+.timers-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.player-timer {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.75rem;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid transparent;
+    transition: all var(--transition-normal);
+}
+
+.player-timer.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.player-timer.low-time {
+    border-color: #ef4444;
+    animation: timerPulse 1s infinite;
+}
+
+.timer-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.timer-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.player-timer.active .timer-value {
+    color: var(--accent-primary);
+}
+
+@keyframes timerPulse {
+
+    0%,
+    100% {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    50% {
+        background: rgba(239, 68, 68, 0.2);
+    }
+}
