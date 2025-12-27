@@ -9,22 +9,31 @@ let isAiThinking = false;
 let playerChosenColor = 'white';
 
 function initializeAI() {
-    // UI listeners removed as they are now handled by the Start Hub in script.js
+    // Try to load the engine using Blob to bypass CORS worker issues
+    fetch(STOCKFISH_URL)
+        .then(response => response.text())
+        .then(script => {
+            const blob = new Blob([script], { type: 'application/javascript' });
+            const blobUrl = URL.createObjectURL(blob);
 
-    // Try to load the engine in a worker
+            engine = new Worker(blobUrl);
+            engine.onmessage = handleEngineMessage;
+            engine.onerror = (err) => {
+                console.error("AI Engine Worker Error:", err);
+                showGameMessage("AI Engine Error. Reload page.", "warning");
+            };
 
-    try {
-        engine = new Worker(STOCKFISH_URL);
-        engine.onmessage = handleEngineMessage;
-
-        // Basic UCI initialization
-        engine.postMessage('uci');
-        engine.postMessage('isready');
-    } catch (e) {
-        console.error("Failed to load Stockfish engine:", e);
-        showGameMessage("AI Engine failed to load. Using local multiplayer.", "warning");
-    }
+            // Basic UCI initialization
+            engine.postMessage('uci');
+            engine.postMessage('isready');
+            console.log("[AI] Engine loaded successfully via Blob.");
+        })
+        .catch(err => {
+            console.error("Failed to fetch Stockfish:", err);
+            showGameMessage("Failed to load AI. Check connection.", "warning");
+        });
 }
+
 
 function handleEngineMessage(event) {
     const line = event.data;
