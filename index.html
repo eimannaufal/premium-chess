@@ -90,18 +90,19 @@
                             </div>
                         </div>
                         <div class="color-selection">
-                            <span class="selection-label">Play as:</span>
+                            <span class="selection-label">Select Your Side</span>
                             <div class="color-options">
-                                <button class="color-btn active" data-color="white" title="Play as White">
-                                    <span class="color-preview white"></span>
-                                    White
+                                <button class="color-btn white-side active" data-color="white">
+                                    <div class="color-icon white">♔</div>
+                                    <span class="color-name">White</span>
                                 </button>
-                                <button class="color-btn" data-color="black" title="Play as Black">
-                                    <span class="color-preview black"></span>
-                                    Black
+                                <button class="color-btn black-side" data-color="black">
+                                    <div class="color-icon black">♚</div>
+                                    <span class="color-name">Black</span>
                                 </button>
                             </div>
                         </div>
+
 
                         <div id="aiStatus" class="ai-status" style="display: none;">
                             <div class="status-indicator"></div>
@@ -155,10 +156,10 @@
 
             <!-- Center - Chess Board -->
             <div class="board-container">
-
                 <div class="board-wrapper">
-                    <div class="chess-board" id="chessBoard"></div>
-
+                    <div class="board-main-area">
+                        <div class="chess-board" id="chessBoard"></div>
+                    </div>
                     <div class="board-bottom-layout">
                         <!-- Bottom Left - Game Status -->
                         <div class="board-mini-panel">

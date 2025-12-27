@@ -135,7 +135,7 @@ function renderBoard() {
         const label = document.createElement('div');
         label.className = 'coordinate-label col-label';
         label.textContent = String.fromCharCode(65 + col); // A-H
-        label.style.left = `calc(2rem + ${col * 12.5}% + 6.25%)`;
+        label.style.left = `${col * 12.5 + 6.25}%`;
         wrapper.appendChild(label);
     }
 
@@ -144,9 +144,10 @@ function renderBoard() {
         const label = document.createElement('div');
         label.className = 'coordinate-label row-label';
         label.textContent = 8 - row; // 8 to 1
-        label.style.top = `calc(2rem + ${row * 12.5}% + 6.25%)`;
+        label.style.top = `${row * 12.5 + 6.25}%`;
         wrapper.appendChild(label);
     }
+
 
     // Render squares and pieces
     for (let row = 0; row < 8; row++) {
