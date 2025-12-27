@@ -72,7 +72,7 @@ function initializeGame() {
     // Reset board effects
     const boardWrapper = document.querySelector('.board-wrapper');
     if (boardWrapper) {
-        boardWrapper.classList.remove('winner', 'loser');
+        boardWrapper.classList.remove('winner', 'loser', 'draw');
     }
 }
 
@@ -596,47 +596,53 @@ function checkGameState() {
 
     gameState.checkState[currentColor] = inCheck;
 
-    if (inCheck) {
-        // Check if there are any valid moves (checkmate detection)
-        let hasValidMoves = false;
-
-        outerLoop:
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
-                const piece = gameState.board[row][col];
-                if (piece && piece.color === currentColor) {
-                    const validMoves = calculateValidMoves(row, col);
-                    if (validMoves.length > 0) {
-                        hasValidMoves = true;
-                        break outerLoop;
-                    }
+    // Always check if there are any valid moves for the current player
+    let hasValidMoves = false;
+    outerLoop:
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const piece = gameState.board[row][col];
+            if (piece && piece.color === currentColor) {
+                const validMoves = calculateValidMoves(row, col);
+                if (validMoves.length > 0) {
+                    hasValidMoves = true;
+                    break outerLoop;
                 }
             }
         }
+    }
 
-        if (!hasValidMoves) {
-            gameState.isGameOver = true;
+    if (!hasValidMoves) {
+        gameState.isGameOver = true;
+        const boardWrapper = document.querySelector('.board-wrapper');
+
+        if (inCheck) {
+            // Checkmate
             const winner = currentColor === 'white' ? 'Black' : 'White';
             showGameMessage(`Checkmate! ${winner} wins! 👑`, 'victory');
             playSound('victory');
 
-            // Visual feedback for board
-            const boardWrapper = document.querySelector('.board-wrapper');
             if (boardWrapper) {
                 if (gameState.isOnline && gameState.myColor) {
-                    // Online: Blue for me winning, Red for me losing
                     const myColor = gameState.myColor.toLowerCase();
                     const winnerColor = winner.toLowerCase();
                     boardWrapper.classList.add(myColor === winnerColor ? 'winner' : 'loser');
                 } else {
-                    // Local: Always highlight as victory
                     boardWrapper.classList.add('winner');
                 }
             }
         } else {
-            showGameMessage('Check! Protect your king!', 'warning');
+            // Stalemate
+            showGameMessage('Draw! Stalemate 🤝', 'warning');
             playSound('check');
+
+            if (boardWrapper) {
+                boardWrapper.classList.add('draw');
+            }
         }
+    } else if (inCheck) {
+        showGameMessage('Check! Protect your king!', 'warning');
+        playSound('check');
     }
 }
 

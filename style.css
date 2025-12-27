@@ -387,6 +387,12 @@ body {
     animation: redGlowPulse 2s infinite;
 }
 
+.board-wrapper.draw {
+    box-shadow: 0 0 50px rgba(234, 179, 8, 0.8), 0 0 100px rgba(234, 179, 8, 0.4);
+    border-color: rgba(234, 179, 8, 0.8);
+    animation: goldGlowPulse 2s infinite;
+}
+
 @keyframes blueGlowPulse {
 
     0%,
@@ -1054,4 +1060,8 @@ body {
 .overlay-content p {
     color: var(--text-secondary);
     margin-bottom: 2rem;
+}
+@keyframes goldGlowPulse {
+    0%, 100% { box-shadow: 0 0 50px rgba(234, 179, 8, 0.8), 0 0 100px rgba(234, 179, 8, 0.4); }
+    50% { box-shadow: 0 0 80px rgba(234, 179, 8, 1), 0 0 150px rgba(234, 179, 8, 0.6); }
 }
