@@ -137,8 +137,14 @@
                         <button class="entry-action-btn local-btn" id="startLocalMatchBtn">Start Local</button>
                     </div>
                 </div>
+
+                <!-- Version Indicator -->
+                <div class="entry-footer">
+                    <span class="version-tag">Build v1.1.2</span>
+                </div>
             </div>
         </div>
+
 
 
         <div class="game-layout">
@@ -171,7 +177,12 @@
                                     <span class="turn-value" id="turnValue">White</span>
                                 </div>
                                 <div class="game-message mini-message" id="gameMessage">Make your move</div>
+                                <div id="aiStatusHub" class="mini-status-row" style="display: none;">
+                                    <div class="status-indicator thinking"></div>
+                                    <span>AI is calculating...</span>
+                                </div>
                             </div>
+
                         </div>
 
 

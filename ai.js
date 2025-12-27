@@ -28,16 +28,27 @@ function initializeAI() {
 
 function handleEngineMessage(event) {
     const line = event.data;
-    console.log("[STOCKFISH]", line);
+    console.log("[AI Engine]", line);
+
+    if (line === 'uciok') {
+        console.log("[AI] Engine UCI initialized.");
+    }
+    if (line === 'readyok') {
+        console.log("[AI] Engine is ready.");
+    }
 
     if (line.startsWith('bestmove')) {
         const move = line.split(' ')[1];
         if (move && move !== '(none)') {
+            console.log("[AI] Engine recommends move:", move);
             executeAiMove(move);
+        } else {
+            console.warn("[AI] Engine returned no move. Game state might be blocked.");
         }
         setAiThinking(false);
     }
 }
+
 
 function startAiMatch(chosenColor = null, difficulty = null) {
     const finalColor = chosenColor || playerChosenColor;
@@ -59,6 +70,7 @@ function startAiMatch(chosenColor = null, difficulty = null) {
     };
 
 
+
     if (chosenColor) {
         startMatch();
     } else if (confirm(`Start match against AI as ${finalColor.charAt(0).toUpperCase() + finalColor.slice(1)}? This will reset the current game.`)) {
@@ -69,15 +81,24 @@ function startAiMatch(chosenColor = null, difficulty = null) {
 
 
 function triggerAiMove() {
-    if (!engine || !gameState.isAI || gameState.isGameOver) return;
+    if (!engine) {
+        console.error("[AI] Engine not initialized!");
+        return;
+    }
+    if (!gameState.isAI || gameState.isGameOver) {
+        console.log("[AI] triggerAiMove skipped: Not AI mode or Game Over.");
+        return;
+    }
 
     setAiThinking(true);
 
     const FEN = boardToFEN();
-    console.log("Sending FEN to AI:", FEN);
+    console.log("[AI] Analyzing position (FEN):", FEN);
+
+    // Ensure engine is ready for new command
+    engine.postMessage('ucinewgame');
 
     // Set engine parameters based on difficulty
-    // Skill Level 0-20
     const skillLevel = Math.floor((aiDifficulty - 1) * 2.22); // Map 1-10 to 0-20
     engine.postMessage(`setoption name Skill Level value ${skillLevel}`);
 
@@ -85,10 +106,13 @@ function triggerAiMove() {
     engine.postMessage(`position fen ${FEN}`);
 
     // Map difficulty to search depth/time
-    // Level 1: 100ms, Level 10: 2000ms
+    // Level 1: 200ms, Level 10: 2000ms
     const moveTime = aiDifficulty * 200;
+    console.log(`[AI] Thinking for ${moveTime}ms (Level ${aiDifficulty})...`);
     engine.postMessage(`go movetime ${moveTime}`);
 }
+
+
 
 function executeAiMove(moveStr) {
     // Parse move like "e2e4" or "e7e8q"
@@ -108,11 +132,12 @@ function executeAiMove(moveStr) {
 
 function setAiThinking(thinking) {
     isAiThinking = thinking;
-    const status = document.getElementById('aiStatus');
+    const status = document.getElementById('aiStatusHub');
     if (status) {
         status.style.display = thinking ? 'flex' : 'none';
     }
 }
+
 
 function boardToFEN() {
     let fen = '';

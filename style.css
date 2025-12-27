@@ -1579,3 +1579,56 @@ body {
     background: var(--accent-primary);
     transform: translateX(2px);
 }
+
+/* AI Thinking Status in Mini Panel */
+.mini-status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.8rem;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.status-indicator.thinking {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-primary);
+    animation: thinkingPulse 1s infinite ease-in-out;
+}
+
+@keyframes thinkingPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+}
+
+/* Version Tag */
+.entry-footer {
+    padding-top: 2rem;
+    text-align: right;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 1rem;
+}
+
+.version-tag {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
