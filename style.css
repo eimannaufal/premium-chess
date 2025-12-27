@@ -471,6 +471,7 @@ body {
     position: relative;
     /* Anchor for coordinates */
     width: fit-content;
+    height: fit-content;
     margin: 0 auto;
 }
 
@@ -481,19 +482,29 @@ body {
     color: var(--text-muted);
     user-select: none;
     pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .row-label {
-    left: -1.75rem;
-    width: 1.5rem;
-    text-align: center;
+    left: -1.25rem;
+    /* Closer to cell */
+    width: 1rem;
+    height: 12.5%;
+    /* Match row height */
+    transform: translateY(-50%);
+    /* Center vertically */
 }
 
 .col-label {
-    bottom: -2rem;
+    bottom: -1.5rem;
+    /* Right below board */
+    width: 12.5%;
+    /* Match col width */
     height: 1.5rem;
-    line-height: 1.5rem;
-    text-align: center;
+    transform: translateX(-50%);
+    /* Center horizontally */
 }
 
 .chess-board {
@@ -1230,8 +1241,8 @@ body {
 
 .color-options {
     display: flex;
-    gap: 1.5rem;
-    /* Seperable */
+    gap: 1rem;
+    /* Better spacing */
 }
 
 .color-btn {
@@ -1240,34 +1251,38 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 1rem;
     padding: 1.5rem 1rem;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: var(--border-radius-md);
+    border: 2px solid rgba(255, 255, 255, 0.05);
+    /* Separable border */
+    border-radius: var(--border-radius-lg);
     color: var(--text-secondary);
     cursor: pointer;
     transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
 }
 
 .color-btn:hover {
     background: rgba(99, 102, 241, 0.1);
-    border-color: var(--accent-primary);
-    transform: translateY(-2px);
+    border-color: rgba(99, 102, 241, 0.4);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 }
 
 .color-btn.active {
     background: rgba(99, 102, 241, 0.15);
-    border: 2px solid var(--accent-primary);
+    border-color: var(--accent-primary);
     color: var(--text-primary);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+    transform: scale(1.02);
 }
 
 .color-icon {
-    font-size: 2.5rem;
+    font-size: 3rem;
+    /* Bigger icon */
     line-height: 1;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
 }
 
 .color-icon.white {
