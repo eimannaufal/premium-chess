@@ -6,15 +6,28 @@ const STOCKFISH_URL = 'https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.
 let engine = null;
 let aiDifficulty = 5;
 let isAiThinking = false;
+let playerChosenColor = 'white';
 
 function initializeAI() {
     const startAiBtn = document.getElementById('startAiBtn');
     const difficultySlider = document.getElementById('aiDifficulty');
     const difficultyDisplay = document.getElementById('difficultyDisplay');
+    const colorBtns = document.querySelectorAll('.color-btn');
 
     if (startAiBtn) {
         startAiBtn.addEventListener('click', startAiMatch);
     }
+
+    if (colorBtns) {
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                colorBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                playerChosenColor = btn.dataset.color;
+            });
+        });
+    }
+
 
     if (difficultySlider) {
         difficultySlider.addEventListener('input', (e) => {
@@ -51,21 +64,23 @@ function handleEngineMessage(event) {
 }
 
 function startAiMatch() {
-    if (confirm('Start match against AI? This will reset the current game.')) {
+    if (confirm(`Start match against AI as ${playerChosenColor.charAt(0).toUpperCase() + playerChosenColor.slice(1)}? This will reset the current game.`)) {
         initializeGame();
         gameState.isOnline = false;
         gameState.isAI = true;
-        gameState.aiColor = 'black'; // AI plays as black by default
+        gameState.myColor = playerChosenColor;
+        gameState.aiColor = playerChosenColor === 'white' ? 'black' : 'white';
 
         hideAiPanel();
         showGameMessage(`AI Match Started! (Level ${aiDifficulty})`, 'info');
 
-        // If it's already AI's turn (e.g. if we chose play as Black, but defaulting to White for player)
+        // If AI is white, it moves first
         if (gameState.currentTurn === gameState.aiColor) {
-            triggerAiMove();
+            setTimeout(triggerAiMove, 600);
         }
     }
 }
+
 
 function triggerAiMove() {
     if (!engine || !gameState.isAI || gameState.isGameOver) return;

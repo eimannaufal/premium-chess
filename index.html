@@ -89,6 +89,20 @@
                                 <span>Grandmaster</span>
                             </div>
                         </div>
+                        <div class="color-selection">
+                            <span class="selection-label">Play as:</span>
+                            <div class="color-options">
+                                <button class="color-btn active" data-color="white" title="Play as White">
+                                    <span class="color-preview white"></span>
+                                    White
+                                </button>
+                                <button class="color-btn" data-color="black" title="Play as Black">
+                                    <span class="color-preview black"></span>
+                                    Black
+                                </button>
+                            </div>
+                        </div>
+
                         <div id="aiStatus" class="ai-status" style="display: none;">
                             <div class="status-indicator"></div>
                             <span id="aiStatusText">AI is thinking...</span>
@@ -131,44 +145,52 @@
                 </div>
 
                 <div class="panel-card">
-                    <h2 class="panel-title">Game Status</h2>
-                    <div class="status-container">
-                        <div class="current-turn" id="currentTurn">
-                            <span class="turn-label">Current Turn:</span>
-                            <span class="turn-value" id="turnValue">White</span>
-                        </div>
-                        <div class="game-message" id="gameMessage">Make your move</div>
-                    </div>
-                </div>
-
-                <div class="panel-card">
-                    <h2 class="panel-title">Captured Pieces</h2>
-                    <div class="captured-section">
-                        <div class="captured-group">
-                            <span class="captured-label">White Lost:</span>
-                            <div class="captured-pieces" id="capturedWhite"></div>
-                        </div>
-                        <div class="captured-group">
-                            <span class="captured-label">Black Lost:</span>
-                            <div class="captured-pieces" id="capturedBlack"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-card">
                     <button class="action-btn new-game-btn" id="newGameBtn">
                         <span class="btn-icon">♔</span>
                         New Local Game
                     </button>
                 </div>
+
             </div>
 
             <!-- Center - Chess Board -->
             <div class="board-container">
+
                 <div class="board-wrapper">
                     <div class="chess-board" id="chessBoard"></div>
+
+                    <div class="board-bottom-layout">
+                        <!-- Bottom Left - Game Status -->
+                        <div class="board-mini-panel">
+                            <h3 class="mini-panel-title">Game Status</h3>
+                            <div class="status-container">
+                                <div class="current-turn mini-turn" id="currentTurn">
+                                    <span class="turn-label">Turn:</span>
+                                    <span class="turn-value" id="turnValue">White</span>
+                                </div>
+                                <div class="game-message mini-message" id="gameMessage">Make your move</div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Right - Captured Pieces -->
+                        <div class="board-mini-panel">
+                            <h3 class="mini-panel-title">Captured</h3>
+                            <div class="captured-section mini-captured">
+                                <div class="captured-group">
+                                    <span class="captured-label">White Lost:</span>
+                                    <div class="captured-pieces" id="capturedWhite"></div>
+                                </div>
+                                <div class="captured-group">
+                                    <span class="captured-label">Black Lost:</span>
+                                    <div class="captured-pieces" id="capturedBlack"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+
 
             <!-- Right Panel - Move History -->
             <div class="side-panel right-panel">
