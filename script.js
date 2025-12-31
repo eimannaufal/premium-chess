@@ -2,7 +2,7 @@
 // CHESS GAME - COMPLETE IMPLEMENTATION
 // ===================================
 
-const GAME_VERSION = 'v1.1.6'; // UI Refinement
+const GAME_VERSION = 'v1.1.7'; // Multiplayer Fixes
 
 const PIECES = {
     white: {
