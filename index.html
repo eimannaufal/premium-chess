@@ -59,6 +59,7 @@
             </audio>
         </header>
 
+
         <!-- Main Entry Overlay -->
         <div id="startOverlay" class="start-overlay">
             <div class="overlay-card entry-card">
@@ -144,6 +145,41 @@
                     <span class="version-tag">Build v1.1.3</span>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- Waiting For Opponent Overlay -->
+        <div id="waitingOverlay" class="start-overlay hidden">
+            <div class="overlay-card waiting-card">
+                <header class="entry-header">
+                    <h2 class="entry-title">Waiting for Opponent</h2>
+                    <p class="entry-subtitle">Share this link to play</p>
+                </header>
+
+                <div class="waiting-content">
+                    <div class="waiting-loader">
+                        <div class="spinner"></div>
+                    </div>
+
+                    <div class="code-box-container">
+                        <label>Game Code</label>
+                        <div class="code-box">
+                            <span id="displayedCode" class="code-text">ABCD12</span>
+                        </div>
+                    </div>
+
+                    <div class="link-box-container">
+                        <label>Invite Link</label>
+                        <div class="link-box">
+                            <span id="displayedLink" class="link-text">https://...</span>
+                            <button id="copyLinkBtn" class="copy-btn" title="Copy Link">📋</button>
+                        </div>
+                    </div>
+
+                    <p class="waiting-status" id="waitingStatusText">Waiting for player to join...</p>
+
+                    <button id="cancelHostBtn" class="cancel-btn">Cancel Game</button>
+                </div>
             </div>
         </div>
 

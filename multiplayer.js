@@ -24,12 +24,14 @@ let isHost = false;
 let myColor = null; // 'white' or 'black'
 
 // Initialize multiplayer  
+// Initialize multiplayer  
 function initializeMultiplayer() {
     // Note: The 'Create' button is handled in initializeStartOverlay in script.js
 
     const joinBtn = document.getElementById('hubJoinGameBtn');
     const gameCodeInput = document.getElementById('hubGameCodeInput');
     const copyLinkBtn = document.getElementById('copyLinkBtn');
+    const cancelHostBtn = document.getElementById('cancelHostBtn');
 
     if (joinBtn && gameCodeInput) {
         joinBtn.addEventListener('click', () => joinOnlineGame(gameCodeInput.value.trim()));
@@ -43,11 +45,10 @@ function initializeMultiplayer() {
 
     if (copyLinkBtn) {
         copyLinkBtn.addEventListener('click', () => {
-
             const link = document.getElementById('displayedLink').textContent;
             navigator.clipboard.writeText(link).then(() => {
                 const originalText = copyLinkBtn.innerHTML;
-                copyLinkBtn.textContent = '✅';
+                copyLinkBtn.innerHTML = '✅';
                 setTimeout(() => {
                     copyLinkBtn.innerHTML = originalText;
                 }, 2000);
@@ -55,11 +56,9 @@ function initializeMultiplayer() {
         });
     }
 
-    gameCodeInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            joinOnlineGame(gameCodeInput.value.trim());
-        }
-    });
+    if (cancelHostBtn) {
+        cancelHostBtn.addEventListener('click', cancelHostGame);
+    }
 
     // Check for game code in URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -76,9 +75,11 @@ function createOnlineGame(chosenColor = 'white') {
     isHost = true;
     myColor = chosenColor;
 
-    showStatus('Waiting for opponent...');
+    // Show waiting overlay
+    const waitingOverlay = document.getElementById('waitingOverlay');
+    if (waitingOverlay) waitingOverlay.classList.remove('hidden');
+
     showGameCode(gameId);
-    hideMultiplayerControls();
 
     // Reset game data in database
     gameRef.set({
@@ -90,8 +91,6 @@ function createOnlineGame(chosenColor = 'white') {
         initialTime: gameState.timers.initial
     });
 
-
-
     // Listen for opponent joining
     console.log("[MULTIPLAYER] Starting status listener for game:", gameId);
 
@@ -101,30 +100,39 @@ function createOnlineGame(chosenColor = 'white') {
 
         console.log("[MULTIPLAYER] Data updated. Status:", data.status, "IsOnline:", gameState.isOnline);
 
-        if (data && data.status === 'playing' && !gameState.isOnline) {
-            console.log("[MULTIPLAYER] Opponent detected! Transitioning to Online mode...");
+        if (data && data.status === 'playing') { // Check if status changed to playing
+            // Check if we are ALREADY online to avoid re-triggering logic if not needed, 
+            // BUT we might need to re-trigger if we were just waiting.
+            if (!gameState.isOnline) {
+                console.log("[MULTIPLAYER] Opponent detected! Transitioning to Online mode...");
 
-            const hostCol = data.hostColor || 'white';
+                const hostCol = data.hostColor || 'white';
 
-            // Set the state BEFORE calling setupGameListeners
-            gameState.isOnline = true;
-            gameState.myColor = hostCol;
-            myColor = hostCol; // Global variable update
+                // Set the state BEFORE calling setupGameListeners
+                gameState.isOnline = true;
+                gameState.myColor = hostCol;
+                myColor = hostCol; // Global variable update
 
-            showStatus(`Connected! You play as ${hostCol.charAt(0).toUpperCase() + hostCol.slice(1)}`, 'connected');
-            setupGameListeners();
+                // Hide waiting overlay
+                if (waitingOverlay) waitingOverlay.classList.add('hidden');
 
-            // Start a new game
-            initializeGame();
+                showStatus(`Connected! You play as ${hostCol.charAt(0).toUpperCase() + hostCol.slice(1)}`, 'connected');
+                setupGameListeners();
 
-            // Restore online status after initializeGame might have reset it
-            gameState.isOnline = true;
-            gameState.myColor = hostCol;
+                // Start a new game
+                initializeGame();
 
-            renderBoard();
-            updateUI();
-            autoStartGameTimer(); // Start the 5s countdown
-            console.log("[MULTIPLAYER] Host game ready. Online status confirmed.");
+                // Restore online status after initializeGame might have reset it
+                gameState.isOnline = true;
+                gameState.myColor = hostCol;
+
+                renderBoard();
+                updateUI();
+                autoStartGameTimer(); // Start the 5s countdown
+                console.log("[MULTIPLAYER] Host game ready. Online status confirmed.");
+            }
+        } else if (data.status === 'waiting') {
+            document.getElementById('waitingStatusText').textContent = "Waiting for opponent to join...";
         }
 
 
@@ -290,45 +298,76 @@ function generateGameCode() {
 }
 
 function showStatus(message, status = '') {
+    // Try to update main status if it exists
     const statusEl = document.getElementById('connectionStatus');
     const statusText = document.getElementById('statusText');
-    statusEl.style.display = 'flex';
-    statusText.textContent = message;
 
-    statusEl.className = 'connection-status';
-    if (status) {
-        statusEl.classList.add(status);
+    if (statusEl && statusText) {
+        statusEl.style.display = 'flex';
+        statusText.textContent = message;
+        statusEl.className = 'connection-status';
+        if (status) {
+            statusEl.classList.add(status);
+        }
+    }
+
+    // Also update waiting overlay status if visible
+    const waitingStatus = document.getElementById('waitingStatusText');
+    if (waitingStatus) {
+        waitingStatus.textContent = message;
     }
 }
 
 function hideStatus() {
-    document.getElementById('connectionStatus').style.display = 'none';
+    const statusEl = document.getElementById('connectionStatus');
+    if (statusEl) statusEl.style.display = 'none';
 }
 
 function showGameCode(code) {
-    const codeDisplay = document.getElementById('gameCodeDisplay');
     const displayedCode = document.getElementById('displayedCode');
     const displayedLink = document.getElementById('displayedLink');
 
-    codeDisplay.style.display = 'block';
-    displayedCode.textContent = code;
+    if (displayedCode) displayedCode.textContent = code;
 
     const url = new URL(window.location.href);
     url.searchParams.set('game', code);
-    displayedLink.textContent = url.toString();
+    if (displayedLink) displayedLink.textContent = url.toString();
+}
+
+function cancelHostGame() {
+    if (gameRef) {
+        // gameRef.remove(); // Optional: we might not want to delete immediately or we might
+        gameRef.off(); // Remove listeners
+    }
+    gameRef = null;
+
+    // Hide waiting overlay
+    const waitingOverlay = document.getElementById('waitingOverlay');
+    if (waitingOverlay) waitingOverlay.classList.add('hidden');
+
+    // Show start overlay
+    const startOverlay = document.getElementById('startOverlay');
+    if (startOverlay) startOverlay.classList.remove('hidden');
+
+    gameState.isOnline = false;
+    isHost = false;
 }
 
 function hideGameCode() {
-    document.getElementById('gameCodeDisplay').style.display = 'none';
+    // No-op or hide overlay
 }
 
 function showMultiplayerControls() {
-    document.getElementById('multiplayerControls').style.display = 'block';
-    hideGameCode();
+    // If connection fails, show start overlay again
+    const startOverlay = document.getElementById('startOverlay');
+    if (startOverlay) startOverlay.classList.remove('hidden');
+
+    const waitingOverlay = document.getElementById('waitingOverlay');
+    if (waitingOverlay) waitingOverlay.classList.add('hidden');
 }
 
 function hideMultiplayerControls() {
-    document.getElementById('multiplayerControls').style.display = 'none';
+    // Start overlay is already hidden by script.js, but we can ensure it
 }
 
 // Modify the existing handleSquareClick to check if it's player's turn

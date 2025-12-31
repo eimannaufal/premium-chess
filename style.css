@@ -190,6 +190,103 @@ body {
     gap: 1rem;
 }
 
+/* ===================================
+   WAITING OVERLAY
+   =================================== */
+.waiting-card {
+    max-width: 500px;
+    text-align: center;
+}
+
+.waiting-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.waiting-loader {
+    margin-bottom: 1rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(99, 102, 241, 0.3);
+    border-top: 4px solid var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.code-box-container,
+.link-box-container {
+    width: 100%;
+    text-align: left;
+}
+
+.code-box-container label,
+.link-box-container label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.link-box {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-sm);
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+
+.link-text {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.waiting-status {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite;
+}
+
+.cancel-btn {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 0.75rem 2rem;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.cancel-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
 .current-turn {
     display: flex;
     justify-content: space-between;
