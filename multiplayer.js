@@ -82,8 +82,16 @@ function createOnlineGame(chosenColor = 'white') {
     showGameCode(gameId);
 
     // Reset game data in database
+    // Get user info from auth module if available
+    const userId = window.AuthModule && window.AuthModule.getUserId() ? window.AuthModule.getUserId() : 'anonymous';
+    const userName = window.AuthModule && window.AuthModule.getUserName() ? window.AuthModule.getUserName() : 'Anonymous';
+
     gameRef.set({
         host: true,
+        hostId: userId,
+        hostName: userName,
+        guestId: null,
+        guestName: null,
         moves: [],
         resetRequest: false,
         status: 'waiting',
@@ -116,7 +124,10 @@ function createOnlineGame(chosenColor = 'white') {
                 // Hide waiting overlay
                 if (waitingOverlay) waitingOverlay.classList.add('hidden');
 
-                showStatus(`Connected! You play as ${hostCol.charAt(0).toUpperCase() + hostCol.slice(1)}`, 'connected');
+                // Get opponent name if available (guest just joined)
+                const opponentName = data.guestName || 'Opponent';
+                const opponentColor = hostCol === 'white' ? 'Black' : 'White';
+                showStatus(`Connected! You are ${hostCol.charAt(0).toUpperCase() + hostCol.slice(1)}. Playing vs ${opponentName} (${opponentColor})`, 'connected');
                 setupGameListeners();
 
                 // Start a new game
@@ -182,9 +193,15 @@ function joinOnlineGame(code) {
         myColor = guestCol;
 
         // Update status to playing
+        // Get user info from auth module if available
+        const guestUserId = window.AuthModule && window.AuthModule.getUserId() ? window.AuthModule.getUserId() : 'anonymous';
+        const guestUserName = window.AuthModule && window.AuthModule.getUserName() ? window.AuthModule.getUserName() : 'Anonymous';
+
         gameRef.update({
             status: 'playing',
-            guest: true
+            guest: true,
+            guestId: guestUserId,
+            guestName: guestUserName
         });
 
         // Set local state
@@ -200,7 +217,10 @@ function joinOnlineGame(code) {
 
 
         console.log(`[MULTIPLAYER] Successfully joined as ${guestCol}. ID:`, gameId);
-        showStatus(`Connected! You play as ${guestCol.charAt(0).toUpperCase() + guestCol.slice(1)}`, 'connected');
+
+        // Get host name if available
+        const hostName = data.hostName || 'Host';
+        showStatus(`Connected! You are ${guestCol.charAt(0).toUpperCase() + guestCol.slice(1)}. Playing vs ${hostName} (${hostCol})`, 'connected');
         setupGameListeners();
 
         // Start a new game

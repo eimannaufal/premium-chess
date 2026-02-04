@@ -643,6 +643,17 @@ function checkGameState() {
             showGameMessage(`Checkmate! ${winner} wins! 👑`, 'victory');
             playSound('victory');
 
+            // Record game result for auth stats
+            if (window.AuthModule && gameState.isOnline && gameState.myColor) {
+                const myColor = gameState.myColor.toLowerCase();
+                const winnerColor = winner.toLowerCase();
+                if (myColor === winnerColor) {
+                    window.AuthModule.recordGameResult('win');
+                } else {
+                    window.AuthModule.recordGameResult('loss');
+                }
+            }
+
             if (boardWrapper) {
                 if (gameState.isOnline && gameState.myColor) {
                     const myColor = gameState.myColor.toLowerCase();
@@ -656,6 +667,11 @@ function checkGameState() {
             // Stalemate
             showGameMessage('Draw! Stalemate 🤝', 'warning');
             playSound('check');
+
+            // Record draw for auth stats
+            if (window.AuthModule && gameState.isOnline) {
+                window.AuthModule.recordGameResult('draw');
+            }
 
             if (boardWrapper) {
                 boardWrapper.classList.add('draw');
@@ -1079,9 +1095,26 @@ function handleTimeout(color) {
     showGameMessage(`Time's up! ${winner} wins on time! ⌛`, 'victory');
     playSound('victory');
 
+    // Record game result for auth stats
+    if (window.AuthModule && gameState.isOnline && gameState.myColor) {
+        const myColor = gameState.myColor.toLowerCase();
+        const winnerColor = winner.toLowerCase();
+        if (myColor === winnerColor) {
+            window.AuthModule.recordGameResult('win');
+        } else {
+            window.AuthModule.recordGameResult('loss');
+        }
+    }
+
     const boardWrapper = document.querySelector('.board-wrapper');
     if (boardWrapper) {
-        boardWrapper.classList.add('winner');
+        if (gameState.isOnline && gameState.myColor) {
+            const myColor = gameState.myColor.toLowerCase();
+            const winnerColor = winner.toLowerCase();
+            boardWrapper.classList.add(myColor === winnerColor ? 'winner' : 'loser');
+        } else {
+            boardWrapper.classList.add('winner');
+        }
     }
 }
 
