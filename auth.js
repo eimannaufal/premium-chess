@@ -19,6 +19,12 @@ let userStats = {
 function initializeAuth() {
     console.log("[AUTH] Initializing Firebase Auth...");
 
+    // Verify Firebase is initialized
+    if (!firebase.apps.length) {
+        console.error("[AUTH] Firebase not initialized! firebase-init.js must be loaded before auth.js");
+        return;
+    }
+
     // Set up auth state observer
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {

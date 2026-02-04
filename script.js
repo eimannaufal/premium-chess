@@ -765,19 +765,16 @@ function initializeAudio() {
     const muteBtn = document.getElementById('muteBtn');
     const musicVolume = document.getElementById('musicVolume');
     const sfxVolume = document.getElementById('sfxVolume');
-    const audioOverlay = document.getElementById('audioOverlay');
 
-    if (!bgMusic || !muteBtn || !musicVolume || !sfxVolume || !audioOverlay) return;
+    if (!bgMusic || !muteBtn || !musicVolume || !sfxVolume) return;
 
     // Set initial music volume
     bgMusic.volume = musicVolume.value;
 
     const startAudio = () => {
         bgMusic.play().then(() => {
-            audioOverlay.style.opacity = '0';
-            setTimeout(() => {
-                audioOverlay.style.display = 'none';
-            }, 500);
+            // Audio successfully started
+            // Note: audioOverlay removed - element doesn't exist in HTML
 
             // Remove the interaction listeners
             document.removeEventListener('click', startAudio);

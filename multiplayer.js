@@ -3,27 +3,15 @@
 // ===================================
 console.log("[MULTIPLAYER] File loaded and executing...");
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBJTIrPmc1-ryMkMf8BP2euSFVYiwS_bMU",
-    authDomain: "premium-chess-6d0f5.firebaseapp.com",
-    databaseURL: "https://premium-chess-6d0f5-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "premium-chess-6d0f5",
-    storageBucket: "premium-chess-6d0f5.firebasestorage.app",
-    messagingSenderId: "38471159988",
-    appId: "1:38471159988:web:310ba57dc7b703399647e1"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// Firebase is now initialized in firebase-init.js (loaded before this file)
+// Use the global database reference set by firebase-init.js
+const database = window.firebaseDatabase || firebase.database();
 
 let gameId = null;
 let gameRef = null;
 let isHost = false;
 let myColor = null; // 'white' or 'black'
 
-// Initialize multiplayer  
 // Initialize multiplayer  
 function initializeMultiplayer() {
     // Note: The 'Create' button is handled in initializeStartOverlay in script.js
