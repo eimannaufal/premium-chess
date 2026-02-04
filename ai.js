@@ -7,6 +7,7 @@ let engine = null;
 let aiDifficulty = 5;
 let isAiThinking = false;
 let playerChosenColor = 'white';
+let expectingStockfishMove = false; // Track if we're waiting for Stockfish response
 
 function initializeAI() {
     // Try to load the engine using Blob to bypass CORS worker issues
@@ -47,6 +48,13 @@ function handleEngineMessage(event) {
     }
 
     if (line.startsWith('bestmove')) {
+        // Only process if we're expecting a Stockfish move
+        if (!expectingStockfishMove) {
+            console.log("[AI] Ignoring engine response (already made a blunder move)");
+            return;
+        }
+
+        expectingStockfishMove = false;
         const move = line.split(' ')[1];
         if (move && move !== '(none)') {
             console.log("[AI] Engine recommends move:", move);
@@ -89,6 +97,73 @@ function startAiMatch(chosenColor = null, difficulty = null) {
 
 
 
+// ===================================
+// AI DIFFICULTY CONFIGURATION
+// ===================================
+
+// Get blunder probability based on AI level (for levels 1-4)
+function getBlunderProbability(level) {
+    const blunderRates = { 1: 0.40, 2: 0.25, 3: 0.15, 4: 0.05 };
+    return blunderRates[level] || 0;
+}
+
+// Get Stockfish skill level based on AI level
+function getSkillLevel(level) {
+    if (level <= 4) return 0; // Use error rate instead for low levels
+    // Map 5-10 to Stockfish skill 2-20 (approx +3.6 per level)
+    return Math.floor((level - 5) * 3.6 + 2);
+}
+
+// Get all legal moves for the current AI color
+function getAllLegalMoves() {
+    const moves = [];
+    const aiColor = gameState.aiColor;
+
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const piece = gameState.board[row][col];
+            if (piece && piece.color === aiColor) {
+                const validMoves = calculateValidMoves(row, col);
+                validMoves.forEach(move => {
+                    moves.push({
+                        from: { row, col },
+                        to: move
+                    });
+                });
+            }
+        }
+    }
+
+    return moves;
+}
+
+// Convert a move object to Stockfish UCI notation
+function moveToUci(move) {
+    const files = 'abcdefgh';
+    const ranks = '87654321';
+
+    let uci = '';
+    uci += files[move.from.col];
+    uci += ranks[move.from.row];
+    uci += files[move.to.col];
+    uci += ranks[move.to.row];
+
+    // Check for pawn promotion (simple check - if pawn reaches last rank)
+    const piece = gameState.board[move.from.row][move.from.col];
+    if (piece && piece.type === 'pawn') {
+        const lastRank = piece.color === 'white' ? 0 : 7;
+        if (move.to.row === lastRank) {
+            uci += 'q'; // Default to queen promotion
+        }
+    }
+
+    return uci;
+}
+
+// ===================================
+// AI MOVE TRIGGER
+// ===================================
+
 function triggerAiMove() {
     if (!engine) {
         console.error("[AI] Engine not initialized!");
@@ -104,21 +179,59 @@ function triggerAiMove() {
     const FEN = boardToFEN();
     console.log("[AI] Analyzing position (FEN):", FEN);
 
+    // Check if we should make a blunder (for levels 1-4)
+    const blunderProb = getBlunderProbability(aiDifficulty);
+    const shouldBlunder = Math.random() < blunderProb;
+
+    if (shouldBlunder) {
+        console.log(`[AI] Level ${aiDifficulty}: Making a random blunder!`);
+        expectingStockfishMove = false; // Not expecting Stockfish response
+        makeRandomMove();
+    } else {
+        // Use Stockfish for best move
+        expectingStockfishMove = true; // Expecting Stockfish response
+        requestStockfishMove(FEN);
+    }
+}
+
+// Make a random legal move (for blunder behavior)
+function makeRandomMove() {
+    const legalMoves = getAllLegalMoves();
+
+    if (legalMoves.length === 0) {
+        console.warn("[AI] No legal moves available!");
+        setAiThinking(false);
+        return;
+    }
+
+    // Pick a random move
+    const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+    const uciMove = moveToUci(randomMove);
+
+    console.log(`[AI] Random blunder move: ${uciMove}`);
+    executeAiMove(uciMove);
+}
+
+// Request best move from Stockfish
+function requestStockfishMove(fen) {
     // Ensure engine is ready for new command
+    expectingStockfishMove = true;
     engine.postMessage('ucinewgame');
 
     // Set engine parameters based on difficulty
-    const skillLevel = Math.floor((aiDifficulty - 1) * 2.22); // Map 1-10 to 0-20
+    const skillLevel = getSkillLevel(aiDifficulty);
     engine.postMessage(`setoption name Skill Level value ${skillLevel}`);
+    console.log(`[AI] Level ${aiDifficulty}: Stockfish skill ${skillLevel}`);
 
     // Position
-    engine.postMessage(`position fen ${FEN}`);
+    engine.postMessage(`position fen ${fen}`);
 
     // Map difficulty to search depth/time
-    // Level 1: 200ms, Level 10: 2000ms
-    const moveTime = aiDifficulty * 200;
-    console.log(`[AI] Thinking for ${moveTime}ms (Level ${aiDifficulty})...`);
-    engine.postMessage(`go movetime ${moveTime}`);
+    // Level 1-4: 200ms (but these use blunders mostly)
+    // Level 5-10: 400ms-2000ms
+    const baseTime = aiDifficulty <= 4 ? 200 : aiDifficulty * 200;
+    console.log(`[AI] Thinking for ${baseTime}ms (Level ${aiDifficulty})...`);
+    engine.postMessage(`go movetime ${baseTime}`);
 }
 
 
